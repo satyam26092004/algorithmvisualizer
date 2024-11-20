@@ -1,0 +1,130 @@
+.sort-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #2c3e50; /* Darker text for better readability */
+  }
+  
+  .form {
+    margin-bottom: 20px;
+  }
+  
+  .input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 300px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Light shadow */
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.4); /* Green shadow on focus */
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn:hover {
+    transform: scale(1.05); /* Slight scale effect */
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+  }
+  
+  .btn-submit {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .btn-sort {
+    background-color: #f1c40f;
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .btn-disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    box-shadow: none; /* No shadow for disabled buttons */
+  }
+  
+  .bars-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    height: 400px;
+    margin-top: 20px;
+    gap: 15px; /* Space between bars */
+  }
+  
+  .bar-container {
+    position: relative;
+    width: 50px; /* Slightly wider bars */
+    border-radius: 10px 10px 0 0; /* More rounded top */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease;
+  }
+  
+  .bar-container:hover {
+    transform: scale(1.05); /* Hover effect for bar container */
+  }
+  
+  .bar {
+    width: 100%;
+    background-color: #3498db;
+    border-radius: 10px 10px 0 0; /* Rounded top corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Shadow for bars */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .bar:hover {
+    transform: scale(1.1); /* Hover effect for bar */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+  }
+  
+  .bar-label {
+    position: absolute;
+    bottom: -25px;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  .avatar {
+    position: absolute;
+    top: -30px;
+    font-size: 24px;
+    transition: transform 0.3s ease;
+  }
+  
+  .avatar:hover {
+    transform: rotate(15deg); /* Small rotation effect on hover */
+  }
+  
+  .loop-variables {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #2c3e50;
+    font-weight: bold;
+  }
+  
+  .loop-variables p {
+    margin: 5px 0;
+  }
+  
