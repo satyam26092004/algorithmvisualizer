@@ -2,7 +2,7 @@ import React, { Suspense, useState, useRef, useEffect } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { gsap } from "gsap";
 import { X } from "lucide-react";
-import '/app.css';
+import './App.css';
 
 // Lazy loaded algorithm components
 const SelectionSortSimulation = React.lazy(() => import('../components/selectionSort/selectionSort'));
