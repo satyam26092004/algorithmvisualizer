@@ -1,52 +1,63 @@
-import React, { useState } from "react";
-import "./selectionSort.styles.css";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import styles from "./selectionSort.module.css";
 
 const SelectionSortSimulation: React.FC = () => {
   const [array, setArray] = useState<number[]>([]);
-  const [isSorting, setIsSorting] = useState<boolean>(false);
-  const [inputValue, setInputValue] = useState<string>("");
-  const [highlighted, setHighlighted] = useState<{ i: number; j: number; minIndex: number }>({
-    i: -1,
-    j: -1,
-    minIndex: -1,
-  });
-  const [swapStep, setSwapStep] = useState<number>(0);
+  const [isSorting, setIsSorting] = useState(false);
+  const [activeTab, setActiveTab] = useState<"visualization" | "code">(
+    "visualization"
+  );
+  const [selectedLanguage, setSelectedLanguage] = useState(0);
+  const [copiedSnippet, setCopiedSnippet] = useState<string | null>(null);
 
-  const maxArrayLength = 12;
-  const maxValue = 100;
-  const minValue = 5;
-
-  const avatars = [
-    "👾", "👨‍💻", "🐱", "🦄", "🚀", "🎨", "🦊", "⚡", "🧑‍🦰", "👩‍🦳", "👩‍🦳", "👨‍🦳", "🧑‍🦱", "🐶", "☠️"
+  const codeSnippets = [
+    {
+      language: "python",
+      code: `def selection_sort(arr):
+    n = len(arr)
+    for i in range(n-1):
+        min_idx = i
+        for j in range(i+1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+    return arr`,
+    },
+    {
+      language: "javascript",
+      code: `function selectionSort(arr) {
+    const n = arr.length;
+    for (let i = 0; i < n - 1; i++) {
+        let minIdx = i;
+        for (let j = i + 1; j < n; j++) {
+            if (arr[j] < arr[minIdx]) {
+                minIdx = j;
+            }
+        }
+        if (minIdx !== i) {
+            [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+        }
+    }
+    return arr;
+}`,
+    },
   ];
 
-  const generateRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+  const generateRandomArray = () => {
+    const newArray = Array.from(
+      { length: 10 },
+      () => Math.floor(Math.random() * 100) + 1
+    );
+    setArray(newArray);
   };
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const inputArray = inputValue
-      .split(",")
-      .map((num) => parseInt(num.trim()))
-      .filter((num) => !isNaN(num) && num >= minValue && num <= maxValue);
-
-    if (inputArray.length > maxArrayLength) {
-      alert(`Please enter no more than ${maxArrayLength} numbers.`);
-      return;
-    }
-
-    setArray(inputArray);
-    setInputValue("");
+  const copyCodeSnippet = (code: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedSnippet(code);
+    setTimeout(() => setCopiedSnippet(null), 2000);
   };
 
   const selectionSort = async () => {
@@ -55,85 +66,171 @@ const SelectionSortSimulation: React.FC = () => {
 
     for (let i = 0; i < arr.length - 1; i++) {
       let minIndex = i;
-
       for (let j = i + 1; j < arr.length; j++) {
-        setHighlighted({ i, j, minIndex });
         if (arr[j] < arr[minIndex]) {
           minIndex = j;
         }
-        await new Promise((resolve) => setTimeout(resolve, 500)); // Slow down for visualization
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        setArray([...arr]);
       }
 
       if (minIndex !== i) {
-        setHighlighted((prev) => ({ ...prev, minIndex }));
-        setSwapStep((prevStep) => prevStep + 1); // Trigger a swap step
         [arr[i], arr[minIndex]] = [arr[minIndex], arr[i]];
         setArray([...arr]);
-        await new Promise((resolve) => setTimeout(resolve, 1000)); // Slow down the swap
+        await new Promise((resolve) => setTimeout(resolve, 300));
       }
     }
 
-    setHighlighted({ i: -1, j: -1, minIndex: -1 });
     setIsSorting(false);
   };
 
-  const getBarColor = (index: number) => {
-    if (index === highlighted.i || index === highlighted.j) return "red"; // Comparing elements
-    if (index === highlighted.minIndex) return "green"; // Minimum element
-    if (index === swapStep) return "orange"; // Swapped element
-    return generateRandomColor(); // Random color for bars
-  };
+  useEffect(() => {
+    generateRandomArray();
+  }, []);
 
   return (
-    <div className="sort-container">
-      <h1 className="title">Selection Sort Visualization</h1>
-      <form onSubmit={handleSubmit} className="form">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder={`Enter up to ${maxArrayLength} numbers (5-${maxValue}) separated by commas`}
-          className="input"
-        />
-        <button type="submit" className="btn btn-submit">
-          Set Array
-        </button>
-      </form>
-      <button
-        onClick={selectionSort}
-        disabled={isSorting || array.length === 0}
-        className={`btn ${isSorting ? "btn-disabled" : "btn-sort"}`}
+    <div className={styles.container}>
+      <motion.div
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={styles.header}
       >
-        {isSorting ? "Sorting..." : "Start Sorting"}
-      </button>
+        <div>
+          Selection Sort is a comparison-based sorting algorithm. It sorts an
+          array by repeatedly selecting the smallest (or largest) element from
+          the unsorted portion and swapping it with the first unsorted element.
+          This process continues until the entire array is sorted.
+          <ol>
+          <li>
+            First we find the smallest element and swap it with the first
+            element. This way we get the smallest element at its correct
+            position.
+          </li>
+          <li>
+            Then we find the smallest among remaining elements (or second
+            smallest) and move it to its correct position by swapping.
+          </li>
+          <li>
+            We keep doing this until we get all elements moved to correct
+            position.
+          </li>
+        </ol>
+        </div>
+        
+        <h1>Selection Sort Visualizer</h1>
+        <p>Explore the intricacies of the Selection Sort algorithm</p>
+      </motion.div>
 
-      {array.length > 0 && (
-        <div className="bars-container">
-          {array.map((value, index) => (
-            <div
-              key={index}
-              className="bar-container"
-              style={{
-                height: `${(value / maxValue) * 100}%`,
-                backgroundColor: getBarColor(index),
-              }}
-            >
-              <span className="avatar">{avatars[index % avatars.length]}</span>
-              <div className="bar">
-                <span className="bar-label">{value}</span>
-              </div>
+      <div className={styles.tabNavigation}>
+        <button
+          onClick={() => setActiveTab("visualization")}
+          className={`${styles.tabButton} ${
+            activeTab === "visualization" ? styles.activeTab : ""
+          }`}
+        >
+          Visualization
+        </button>
+        <button
+          onClick={() => setActiveTab("code")}
+          className={`${styles.tabButton} ${
+            activeTab === "code" ? styles.activeTab : ""
+          }`}
+        >
+          Code Examples
+        </button>
+      </div>
+
+      <AnimatePresence mode="wait">
+        {activeTab === "visualization" && (
+          <motion.div
+            key="visualization"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.visualizationSection}
+          >
+            <div className={styles.arrayControls}>
+              <button
+                onClick={generateRandomArray}
+                disabled={isSorting}
+                className={styles.controlButton}
+              >
+                Generate New Array
+              </button>
+              <button
+                onClick={selectionSort}
+                disabled={isSorting}
+                className={styles.controlButton}
+              >
+                {isSorting ? "Sorting..." : "Start Sorting"}
+              </button>
             </div>
-          ))}
-        </div>
-      )}
-
-      {/* Display the loop variables i and j */}
-      {isSorting && (
-        <div className="loop-variables">
-          <p>Current i: {highlighted.i}</p>
-          <p>Current j: {highlighted.j}</p>
-        </div>
-      )}
+            <div className={styles.barContainer}>
+              {array.map((value, index) => (
+                <div key={index} className={styles.barWrapper}>
+                  <div
+                    className={styles.bar}
+                    style={{
+                      height: `${value * 3}px`,
+                      backgroundColor: isSorting
+                        ? `hsl(${value * 3}, 70%, 50%)`
+                        : "#3B82F6",
+                    }}
+                  >
+                    <span className={styles.barValue}>{value}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+        {activeTab === "code" && (
+          <motion.div
+            key="code"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={styles.codeSection}
+          >
+            <div className={styles.languageSelector}>
+              {codeSnippets.map((snippet, index) => (
+                <button
+                  key={snippet.language}
+                  onClick={() => setSelectedLanguage(index)}
+                  className={`${styles.languageButton} ${
+                    selectedLanguage === index ? styles.activeLanguage : ""
+                  }`}
+                >
+                  {snippet.language}
+                </button>
+              ))}
+            </div>
+            <div className={styles.codeSnippetContainer}>
+              <button
+                onClick={() =>
+                  copyCodeSnippet(codeSnippets[selectedLanguage].code)
+                }
+                className={styles.copyButton}
+              >
+                {copiedSnippet === codeSnippets[selectedLanguage].code
+                  ? "Copied!"
+                  : "Copy Code"}
+              </button>
+              <SyntaxHighlighter
+                language={codeSnippets[selectedLanguage].language}
+                style={vscDarkPlus}
+                customStyle={{
+                  borderRadius: "12px",
+                  fontSize: "14px",
+                  padding: "20px",
+                }}
+              >
+                {codeSnippets[selectedLanguage].code}
+              </SyntaxHighlighter>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

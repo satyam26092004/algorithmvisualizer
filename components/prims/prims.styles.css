@@ -1,0 +1,217 @@
+.graph-visualizer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    width: 1200px;
+    
+    margin: 0 auto;
+  }
+  
+  .controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .input-number {
+    width: 4rem;
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+  }
+  
+  .button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-weight: 500;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .button:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  .button-blue {
+    background-color: #3b82f6;
+  }
+  
+  .button-blue:hover:not(:disabled) {
+    background-color: #2563eb;
+  }
+  
+  .button-green {
+    background-color: #22c55e;
+  }
+  
+  .button-green:hover:not(:disabled) {
+    background-color: #16a34a;
+  }
+  
+  .button-purple {
+    background-color: #8b5cf6;
+  }
+  
+  .button-purple:hover:not(:disabled) {
+    background-color: #7c3aed;
+  }
+  
+  .button-red {
+    background-color: #ef4444;
+  }
+  
+  .button-red:hover:not(:disabled) {
+    background-color: #dc2626;
+  }
+  
+  .speed-select {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+  }
+  
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .edge-inputs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .edge-input {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    width: 6rem;
+  }
+  
+  .error-message {
+    color: #ef4444;
+    margin-bottom: 1rem;
+  }
+  
+  .table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  
+  .table {
+    min-width: 100%;
+    border: 1px solid #e2e8f0;
+    border-collapse: collapse;
+  }
+  
+  .table th {
+    background-color: #f3f4f6;
+    padding: 0.5rem 1rem;
+    text-align: left;
+  }
+  
+  .table td {
+    padding: 0.5rem 1rem;
+    text-align: center;
+    border-top: 1px solid #e2e8f0;
+  }
+  
+  .graph-container {
+    position: relative;
+    width: 100%;
+    height: 24rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    background-color: white;
+    overflow: hidden;
+  }
+  
+  .graph-svg {
+    width: 100%;
+    height: 100%;
+  }
+  
+  /* Graph Elements */
+  .edge {
+    stroke: #9ca3af;
+    stroke-width: 2;
+  }
+  
+  .edge-mst {
+    stroke: #22c55e;
+    stroke-width: 3;
+  }
+  
+  .edge-arrow {
+    fill: #9ca3af;
+  }
+  
+  .edge-arrow-mst {
+    fill: #22c55e;
+  }
+  
+  .edge-weight {
+    font-size: 12px;
+    background-color: white;
+  }
+  
+  .node-group {
+    cursor: move;
+  }
+  
+  .node {
+    transition: fill 0.3s;
+  }
+  
+  .node-default {
+    fill: #9ca3af;
+  }
+  
+  .node-visited {
+    fill: #22c55e;
+  }
+  
+  .node-dragging {
+    stroke: #3b82f6;
+    stroke-width: 2;
+  }
+  
+  .node-text {
+    fill: white;
+    font-size: 14px;
+    user-select: none;
+    pointer-events: none;
+  }
+  
+  /* Input styles */
+  input[type="number"],
+  input[type="text"] {
+    font-size: 14px;
+  }
+  
+  input[type="number"]:focus,
+  input[type="text"]:focus,
+  select:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  }
+  
+  /* Transitions */
+  .transition-colors {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }

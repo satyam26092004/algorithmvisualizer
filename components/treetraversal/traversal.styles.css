@@ -1,0 +1,150 @@
+/* Tree Traversal Visualizer CSS */
+.tree-traversal-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tree-traversal-title {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.tree-input-section, 
+.traversal-type-section {
+  margin-bottom: 25px;
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.tree-input-label, 
+.traversal-type-label {
+  display: block;
+  margin-bottom: 10px;
+  color: #34495e;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.tree-input-field {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.tree-input-field:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+}
+
+.tree-input-hint {
+  color: #7f8c8d;
+  font-size: 14px;
+  margin-top: 8px;
+  font-style: italic;
+}
+
+.traversal-type-select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: white;
+  transition: all 0.3s ease;
+}
+
+.traversal-type-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.traverse-button, 
+.step-button {
+  flex: 1;
+  margin: 0 10px;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: #3498db;
+  color: white;
+}
+
+.traverse-button:hover, 
+.step-button:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.traverse-button:active, 
+.step-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.traverse-button:disabled, 
+.step-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.traversal-result-section {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.traversal-result-title {
+  color: #2c3e50;
+  font-size: 20px;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.traversal-result-display {
+  font-family: 'Courier New', monospace;
+  background-color: #f1f1f1;
+  padding: 15px;
+  border-radius: 6px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  min-height: 100px;
+}
+img{
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+/* algorithm/components/treetraversal/traversal.styles.css */
+
+img:hover {
+  transform: scale(1.05); /* Correctly apply scaling */
+  transition: transform 0.3s ease; /* Smooth transition effect */
+}

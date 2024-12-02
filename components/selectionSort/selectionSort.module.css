@@ -1,0 +1,201 @@
+/* selectionSort.styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Pre:wght@400..700&display=swap');
+:root {
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --background-color: #f4f4f8;
+  --text-color: #34495e;
+  --muted-text-color: #7f8c8d;
+  --dark-color: #2c3e50;
+  --light-gray: #ecf0f1;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: var(--background-color);
+  min-height: 100vh;
+  font-family: "Edu AU VIC WA NT Pre", cursive;
+  text-align: left;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 25px;
+  font-style: italic;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.header h1 {
+  font-size: 2.5rem;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
+}
+
+.header p {
+  color: var(--muted-text-color);
+  font-size: 1rem;
+}
+
+.tabNavigation {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.tabButton {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background-color: var(--light-gray);
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.tabButton.activeTab {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.visualizationSection,
+.codeSection {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+}
+
+.arrayControls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.controlButton {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.controlButton:disabled {
+  background-color: var(--muted-text-color);
+  cursor: not-allowed;
+}
+
+.barContainer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  height: 300px;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.barWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.bar {
+  width: 40px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.barValue {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 0.5rem;
+  color: var(--muted-text-color);
+  font-size: 0.8rem;
+}
+
+.languageSelector {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.languageButton {
+  padding: 0.5rem 1rem;
+  background-color: var(--light-gray);
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.languageButton.activeLanguage {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.codeSnippetContainer {
+  position: relative;
+}
+
+.copyButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  padding: 0.5rem 1rem;
+  background-color: var(--dark-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.copyButton:hover {
+  background-color: var(--text-color);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .header h1 {
+    font-size: 2rem;
+  }
+
+  .tabNavigation,
+  .languageSelector {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .barContainer {
+    height: 200px;
+  }
+
+  .bar {
+    width: 25px;
+  }
+
+  .copyButton {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
