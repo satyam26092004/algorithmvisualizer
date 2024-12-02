@@ -517,7 +517,7 @@ const TreeTraversalVisualizer: React.FC = () => {
             <strong>Example:</strong>
           </p>
           <img
-            src="/src/assets/level.jpg"
+            src="/level.jpg"
             alt=""
             style={{ width: "600px", height: "500px" }}
           />
@@ -536,7 +536,7 @@ const TreeTraversalVisualizer: React.FC = () => {
             <strong>Example:</strong>
           </p>
           <img
-            src="/src/assets/preorder.jpg"
+            src="/preorder.jpg"
             alt=""
             style={{ width: "600px", height: "500px" }}
           />
@@ -556,7 +556,7 @@ const TreeTraversalVisualizer: React.FC = () => {
             <strong>Example:</strong>
           </p>
           <img
-            src="/src/assets/inorder.jpg"
+            src="/inorder.jpg"
             alt=""
             style={{ width: "600px", height: "500px" }}
           />
@@ -577,7 +577,7 @@ const TreeTraversalVisualizer: React.FC = () => {
             <strong>Example:</strong>
           </p>
           <img
-            src="/src/assets/postorder.jpg"
+            src="/postorder.jpg"
             style={{ width: "600px", height: "500px" }}
           />
           <pre>Output: 4 5 2 6 3 1</pre>
