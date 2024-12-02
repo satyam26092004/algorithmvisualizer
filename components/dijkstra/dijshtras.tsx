@@ -1,4 +1,4 @@
-import React, { useState, useEffect, MouseEvent } from "react";
+import React, { useState, useEffect } from "react";
 import "./dijshtras.styles.css";
 
 // Typed interfaces for better type safety
@@ -204,34 +204,7 @@ const GraphVisualizer: React.FC = () => {
   };
   const MAX_EDGES = 10;
 
-  const handleDragStart = (e: React.MouseEvent<SVGGElement>, node: string) => {
-    e.preventDefault();
-    const svgRect = (
-      e.currentTarget.closest("svg") as SVGSVGElement
-    ).getBoundingClientRect();
-    const offsetX = e.clientX - svgRect.left - nodePositions[node].x;
-    const offsetY = e.clientY - svgRect.top - nodePositions[node].y;
-
-    setDraggedNode(node);
-    setOffset({ x: offsetX, y: offsetY });
-  };
-
-  const handleDrag = (e: React.MouseEvent<SVGSVGElement>) => {
-    if (!draggedNode) return;
-
-    const svgRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
-    const x = Math.max(20, Math.min(580, e.clientX - svgRect.left - offset.x));
-    const y = Math.max(20, Math.min(380, e.clientY - svgRect.top - offset.y));
-
-    setNodePositions((prev) => ({
-      ...prev,
-      [draggedNode]: { x, y },
-    }));
-  };
-
-  const handleDragEnd = () => {
-    setDraggedNode(null);
-  };
+  
 
   const addEdge = () => {
     if (!vertex1 || !vertex2 || !weight) {
