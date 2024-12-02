@@ -1,13 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      '@': resolve(__dirname, 'src'),
+    extensions: ['.ts', '.tsx', '.js', '.jsx']
+  },build: {
+    rollupOptions: {
+      external: [
+        '/components/SelectionSort/selectionSort',
+       
+      ],
     },
-    extensions: ['.ts', '.tsx', '.js', '.jsx'] // Add this line
-  },
+  }
 })

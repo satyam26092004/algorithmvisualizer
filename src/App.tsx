@@ -1,20 +1,28 @@
+import React from 'react';
 import { useState, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { X } from "lucide-react";
-import SelectionSortSimulation from "/components/SelectionSort/selectionSort.tsx";
-import BubbleSortSimulation from "/components/bubbleSort/bubbleSort.tsx";
-import DijkstraVisualizer from "/components/dijshtras/dijshtras.tsx";
-import RecursionTreeVisualizer from "/components/mergeSort/mergeSort.tsx";
-import QuickSortVisualizer from "/components/quickSort/quickSort.tsx";
-import KruskalVisualization from "/components/kruskal/kruskal.tsx";
-import BFSVisualization from '/components/bfs/bfs.tsx';
-import DFSVisualization from "/components/dfs/dfs.tsx";
-import GraphVisualizer from "/components/prims/prims.tsx";
-import TreeTraversalVisualizer from "/components/treetraversal/traversal.tsx";
-import AnimatedVisualizer from "/components/backtracking/backtracking.tsx";
+import SelectionSortSimulation from './components/SelectionSort/selectionSort';
+
+const BubbleSortSimulation = React.lazy(() => import("./components/BubbleSort/BubbleSort"));
+const DijkstraVisualizer = React.lazy(() => import("./components/Dijkstra/Dijkstra"));
+const RecursionTreeVisualizer = React.lazy(() => import("./components/MergeSort/MergeSort"));
+const QuickSortVisualizer = React.lazy(() => import("./components/QuickSort/QuickSort"));
+const KruskalVisualization = React.lazy(() => import("./components/Kruskal/Kruskal"));
+const BFSVisualization = React.lazy(() => import("./components/BFS/BFS"));
+const DFSVisualization = React.lazy(() => import("./components/DFS/DFS"));
+const GraphVisualizer = React.lazy(() => import("./components/Prims/Prims"));
+const TreeTraversalVisualizer = React.lazy(() => import("./components/TreeTraversal/Traversal"));
+const AnimatedVisualizer = React.lazy(() => import("./components/Backtracking/Backtracking"));
 import './app.css';
 
-const algorithms = [
+interface Algorithm {
+  id: string;
+  label: string;
+  component: React.ComponentType;
+}
+
+const algorithms: Algorithm[] = [
   { id: "selectionSort", label: "Selection Sort", component: SelectionSortSimulation },
   { id: "bubbleSort", label: "Bubble Sort", component: BubbleSortSimulation },
   { id: "dijkstra", label: "Dijkstra's Algorithm", component: DijkstraVisualizer },
@@ -28,12 +36,16 @@ const algorithms = [
   { id: "animated", label: "Backtracking", component: AnimatedVisualizer },
 ];
 
-const LoadingPage = ({ onLoadComplete }) => {
-  const containerRef = useRef(null);
-  const titleRef = useRef(null);
-  const dotsRef = useRef([]);
-  const lineRef = useRef(null);
-  const textRef = useRef(null);
+interface LoadingPageProps {
+  onLoadComplete: () => void;
+}
+
+const LoadingPage: React.FC<LoadingPageProps> = ({ onLoadComplete }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const dotsRef = useRef<HTMLDivElement[]>([]);
+  const lineRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -72,10 +84,12 @@ const LoadingPage = ({ onLoadComplete }) => {
     )
     .to({}, { duration: 1 });
 
-    return () => tl.kill();
-  }, []);
+    return () => { 
+      tl.kill(); 
+    };
+  }, [onLoadComplete]);
 
-  const addDotRef = (el) => {
+  const addDotRef = (el: HTMLDivElement | null) => {
     if (el && !dotsRef.current.includes(el)) {
       dotsRef.current.push(el);
     }
@@ -110,15 +124,15 @@ const LoadingPage = ({ onLoadComplete }) => {
   );
 };
 
-const App = () => {
-  const [selectedAlgorithm, setSelectedAlgorithm] = useState(algorithms[0].id);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const sidebarRef = useRef(null);
-  const menuItemsRef = useRef([]);
-  const mainContentRef = useRef(null);
+const App: React.FC = () => {
+  const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>(algorithms[0].id);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+  const menuItemsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const mainContentRef = useRef<HTMLDivElement>(null);
 
-  const handleSelectAlgorithm = (algorithm) => {
+  const handleSelectAlgorithm = (algorithm: string) => {
     setSelectedAlgorithm(algorithm);
   };
 
@@ -127,11 +141,11 @@ const App = () => {
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: MouseEvent) => {
       if (isSidebarOpen && 
           sidebarRef.current && 
-          !sidebarRef.current.contains(event.target) &&
-          !event.target.closest('.toggle-button')) {
+          !sidebarRef.current.contains(event.target as Node) &&
+          !((event.target as HTMLElement).closest('.toggle-button'))) {
         setIsSidebarOpen(false);
       }
     };
@@ -142,7 +156,7 @@ const App = () => {
 
   useEffect(() => {
     const sidebar = sidebarRef.current;
-    const menuItems = menuItemsRef.current.filter(Boolean);
+    const menuItems = menuItemsRef.current.filter(Boolean) as HTMLDivElement[];
 
     if (!sidebar || menuItems.length === 0) return;
 
@@ -200,9 +214,8 @@ const App = () => {
   const SelectedComponent = algorithms.find((alg) => alg.id === selectedAlgorithm)?.component;
 
   return (
-    < >
     <div className="content">
-    {isLoading ? (
+      {isLoading ? (
         <LoadingPage onLoadComplete={() => setIsLoading(false)} />
       ) : (
         <div className="app-container">
@@ -233,15 +246,13 @@ const App = () => {
               </div>
             ))}
           </div>
-           <p className="title">ALGORITHM VISUALIZER</p>
+          <p className="title">ALGORITHM VISUALIZER</p>
           <div ref={mainContentRef} className="content">
             {SelectedComponent ? <SelectedComponent /> : <p>Select an algorithm to visualize.</p>}
           </div>
         </div>
       )}
     </div>
-      
-    </>
   );
 };
 
