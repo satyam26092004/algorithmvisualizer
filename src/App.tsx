@@ -1,17 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { X } from "lucide-react";
-import SelectionSortSimulation from "/components/SelectionSort/selectionSort.tsx";
-import BubbleSortSimulation from "/components/bubbleSort/bubbleSort.tsx";
-import DijkstraVisualizer from "/components/dijshtras/dijshtras.tsx";
-import RecursionTreeVisualizer from "/components/mergeSort/mergeSort.tsx";
-import QuickSortVisualizer from "/components/quickSort/quickSort.tsx";
-import KruskalVisualization from "/components/kruskal/kruskal.tsx";
-import BFSVisualization from '/components/bfs/bfs.tsx';
-import DFSVisualization from "/components/dfs/dfs.tsx";
-import GraphVisualizer from "/components/prims/prims.tsx";
-import TreeTraversalVisualizer from "/components/treetraversal/traversal.tsx";
-import AnimatedVisualizer from "/components/backtracking/backtracking.tsx";
+import SelectionSortSimulation from "./components/SelectionSort/selectionSort.tsx";
+import BubbleSortSimulation from "./components/bubbleSort/bubbleSort.tsx";
+import DijkstraVisualizer from "./components/dijshtras/dijshtras.tsx";
+import RecursionTreeVisualizer from "./components/mergeSort/mergeSort.tsx";
+import QuickSortVisualizer from "./components/quickSort/quickSort.tsx";
+import KruskalVisualization from "./components/kruskal/kruskal.tsx";
+import BFSVisualization from './components/bfs/bfs.tsx';
+import DFSVisualization from "./components/dfs/dfs.tsx";
+import GraphVisualizer from "./components/prims/prims.tsx";
+import TreeTraversalVisualizer from "./components/treetraversal/traversal.tsx";
+import AnimatedVisualizer from "./components/backtracking/backtracking.tsx";
 import './app.css';
 
 const algorithms = [
