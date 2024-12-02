@@ -170,10 +170,42 @@ const GraphVisualizer: React.FC = () => {
   }>({});
   const [draggedNode, setDraggedNode] = useState<string | null>(null);
   const [offset, setOffset] = useState<NodePosition>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
 
+  const handleMouseDown = (e: React.MouseEvent<SVGGElement>, node: string) => {
+    e.preventDefault();
+    const svgRect = (
+      e.currentTarget.closest("svg") as SVGSVGElement
+    ).getBoundingClientRect();
+    const offsetX = e.clientX - svgRect.left - nodePositions[node].x;
+    const offsetY = e.clientY - svgRect.top - nodePositions[node].y;
+
+    setDraggedNode(node);
+    setOffset({ x: offsetX, y: offsetY });
+    setIsDragging(true);
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement>) => {
+    if (!isDragging || !draggedNode) return;
+
+    const svgRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
+    const x = Math.max(20, Math.min(580, e.clientX - svgRect.left - offset.x));
+    const y = Math.max(20, Math.min(380, e.clientY - svgRect.top - offset.y));
+
+    setNodePositions((prev) => ({
+      ...prev,
+      [draggedNode]: { x, y },
+    }));
+  };
+
+  const handleMouseUp = () => {
+    setDraggedNode(null);
+    setIsDragging(false);
+  };
   const MAX_EDGES = 10;
 
-  const handleDragStart = (e: MouseEvent<SVGGElement>, node: string) => {
+  const handleDragStart = (e: React.MouseEvent<SVGGElement>, node: string) => {
+    e.preventDefault();
     const svgRect = (
       e.currentTarget.closest("svg") as SVGSVGElement
     ).getBoundingClientRect();
@@ -184,7 +216,7 @@ const GraphVisualizer: React.FC = () => {
     setOffset({ x: offsetX, y: offsetY });
   };
 
-  const handleDrag = (e: MouseEvent<SVGSVGElement>) => {
+  const handleDrag = (e: React.MouseEvent<SVGSVGElement>) => {
     if (!draggedNode) return;
 
     const svgRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
@@ -200,34 +232,6 @@ const GraphVisualizer: React.FC = () => {
   const handleDragEnd = () => {
     setDraggedNode(null);
   };
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (draggedNode) {
-        handleDrag(e as unknown as MouseEvent<SVGSVGElement>);
-      }
-    };
-
-    const handleMouseUp = () => {
-      if (draggedNode) {
-        handleDragEnd();
-      }
-    };
-
-    window.addEventListener(
-      "mousemove",
-      handleMouseMove as unknown as EventListener
-    );
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener(
-        "mousemove",
-        handleMouseMove as unknown as EventListener
-      );
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [draggedNode]);
 
   const addEdge = () => {
     if (!vertex1 || !vertex2 || !weight) {
@@ -314,7 +318,6 @@ const GraphVisualizer: React.FC = () => {
   const uniqueNodes = [
     ...new Set(edges.flatMap((edge) => [edge.vertex1, edge.vertex2])),
   ];
-
   return (
     <div className="graph-visualizer">
       <div className="header">
@@ -450,7 +453,13 @@ const GraphVisualizer: React.FC = () => {
         </div>
 
         <div className="graph-display">
-          <svg width="600" height="400">
+          <svg
+            width="1160"
+            height="400"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <defs>
               <marker
                 id="arrowhead"
@@ -500,7 +509,7 @@ const GraphVisualizer: React.FC = () => {
             {Object.entries(nodePositions).map(([node, pos]) => (
               <g
                 key={node}
-                onMouseDown={(e) => handleDragStart(e, node)}
+                onMouseDown={(e) => handleMouseDown(e, node)}
                 className="node-group"
               >
                 <circle
