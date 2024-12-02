@@ -1,25 +1,35 @@
-// algorithm/components/kruskal/kruskal.tsx
 import React, { useState, useEffect } from 'react';
 import './kruskal.style.css'; 
-class DisjointSet {
-  constructor() {
-    this.parent = {};
-    this.rank = {};
-  }
 
-  makeSet(vertex) {
+// Type definitions
+interface Edge {
+  vertex1: string;
+  vertex2: string;
+  weight: number;
+}
+
+interface NodePosition {
+  x: number;
+  y: number;
+}
+
+class DisjointSet {
+  private parent: { [key: string]: string } = {};
+  private rank: { [key: string]: number } = {};
+
+  makeSet(vertex: string): void {
     this.parent[vertex] = vertex;
     this.rank[vertex] = 0;
   }
 
-  find(vertex) {
+  find(vertex: string): string {
     if (this.parent[vertex] !== vertex) {
       this.parent[vertex] = this.find(this.parent[vertex]); // Path compression
     }
     return this.parent[vertex];
   }
 
-  union(vertex1, vertex2) {
+  union(vertex1: string, vertex2: string): boolean {
     const root1 = this.find(vertex1);
     const root2 = this.find(vertex2);
 
@@ -38,30 +48,30 @@ class DisjointSet {
   }
 }
 
-const KruskalVisualizer = () => {
-  const [edges, setEdges] = useState([]);
-  const [vertex1, setVertex1] = useState('');
-  const [vertex2, setVertex2] = useState('');
-  const [weight, setWeight] = useState('');
-  const [nodePositions, setNodePositions] = useState({});
-  const [mst, setMst] = useState([]);
-  const [currentStep, setCurrentStep] = useState(-1);
-  const [animationSpeed, setAnimationSpeed] = useState(1000);
-  const [draggedNode, setDraggedNode] = useState(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
-  const [isAnimating, setIsAnimating] = useState(false);
+const KruskalVisualizer: React.FC = () => {
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [vertex1, setVertex1] = useState<string>('');
+  const [vertex2, setVertex2] = useState<string>('');
+  const [weight, setWeight] = useState<string>('');
+  const [nodePositions, setNodePositions] = useState<{ [key: string]: NodePosition }>({});
+  const [mst, setMst] = useState<Edge[]>([]);
+  const [currentStep, setCurrentStep] = useState<number>(-1);
+  const [animationSpeed, setAnimationSpeed] = useState<number>(1000);
+  const [draggedNode, setDraggedNode] = useState<string | null>(null);
+  const [offset, setOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isAnimating, setIsAnimating] = useState<boolean>(false);
 
   const MAX_EDGES = 15;
 
   // Generate optimal layout for nodes in a circle
-  const generateOptimalLayout = (nodes) => {
+  const generateOptimalLayout = (nodes: string[]): { [key: string]: NodePosition } => {
     const width = 600;
     const height = 400;
     const centerX = width / 2;
     const centerY = height / 2;
     const radius = Math.min(width, height) * 0.35;
     
-    return nodes.reduce((acc, node, index) => {
+    return nodes.reduce((acc: { [key: string]: NodePosition }, node, index) => {
       const angle = (index * 2 * Math.PI) / nodes.length;
       acc[node] = {
         x: centerX + radius * Math.cos(angle),
@@ -72,8 +82,10 @@ const KruskalVisualizer = () => {
   };
 
   // Drag handlers
-  const handleDragStart = (e, node) => {
-    const svgRect = e.target.closest('svg').getBoundingClientRect();
+  const handleDragStart = (e: React.MouseEvent, node: string) => {
+    const svgRect = (e.target as SVGElement).closest('svg')?.getBoundingClientRect();
+    if (!svgRect) return;
+
     const offsetX = e.clientX - svgRect.left - nodePositions[node].x;
     const offsetY = e.clientY - svgRect.top - nodePositions[node].y;
     
@@ -81,10 +93,12 @@ const KruskalVisualizer = () => {
     setOffset({ x: offsetX, y: offsetY });
   };
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: MouseEvent) => {
     if (!draggedNode) return;
 
-    const svgRect = e.target.closest('svg').getBoundingClientRect();
+    const svgRect = (e.target as SVGElement).closest('svg')?.getBoundingClientRect();
+    if (!svgRect) return;
+
     const x = Math.max(20, Math.min(580, e.clientX - svgRect.left - offset.x));
     const y = Math.max(20, Math.min(380, e.clientY - svgRect.top - offset.y));
 
@@ -99,7 +113,7 @@ const KruskalVisualizer = () => {
   };
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (draggedNode) {
         handleDrag(e);
       }
@@ -138,7 +152,7 @@ const KruskalVisualizer = () => {
       return;
     }
 
-    const newEdge = { vertex1, vertex2, weight: Number(weight) };
+    const newEdge: Edge = { vertex1, vertex2, weight: Number(weight) };
     setEdges(prev => [...prev, newEdge]);
 
     const uniqueNodes = [...new Set([...edges.map(e => e.vertex1), ...edges.map(e => e.vertex2), vertex1, vertex2])];
@@ -158,7 +172,7 @@ const KruskalVisualizer = () => {
 
     const sortedEdges = [...edges].sort((a, b) => a.weight - b.weight);
     const disjointSet = new DisjointSet();
-    const mstSteps = [];
+    const mstSteps: Edge[] = [];
 
     // Initialize disjoint set
     const vertices = new Set(edges.flatMap(edge => [edge.vertex1, edge.vertex2]));
@@ -185,7 +199,7 @@ const KruskalVisualizer = () => {
     setIsAnimating(false);
   };
 
-  const uniqueNodes = [...new Set(edges.flatMap(edge => [edge.vertex1, edge.vertex2]))];
+
 
   return (
     <div>
@@ -220,7 +234,7 @@ const KruskalVisualizer = () => {
     <h3>Illustration:</h3>
     <p>The graph contains 9 vertices and 14 edges. The minimum spanning tree formed will have (9 – 1) = 8 edges.</p>
     <h4>After sorting:</h4>
-    <table border="1">
+    <table border={1}>
         <thead>
             <tr>
                 <th>Weight</th>

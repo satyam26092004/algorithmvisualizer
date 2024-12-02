@@ -1,18 +1,14 @@
 .merge-sort-container {
   font-family: Arial, sans-serif;
-  max-width: 1500px;
+  max-width: 1200px;
   margin: 30px;
   margin-left: 30px;
-  overflow: scroll;
-
-
-  
-}
+  }
 .info{
   padding: 10px;
   font-size: 25px;
-  padding-left: 200px;
-  width: 1400px;
+  padding-left: 150px;
+  width: 1200px;
 }
 .page-title {
   text-align: center;

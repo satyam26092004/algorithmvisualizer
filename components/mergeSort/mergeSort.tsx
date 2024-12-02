@@ -5,12 +5,13 @@ import ReactFlow, {
   useEdgesState,
   Node,
   Edge,
-  Background,
+  Background,BackgroundVariant,
   Controls,
-  MiniMap,
+ 
   Handle,
   Position,
 } from "reactflow";
+
 import "reactflow/dist/style.css";
 import "./mergeSort.styles.css";
 
@@ -388,7 +389,7 @@ const MergeSortVisualization: React.FC = () => {
                   alignItems: "center",
                 }}
               >
-                <Background variant="dots" gap={50} />
+               <Background variant={BackgroundVariant.Dots} gap={50} />
                 <Controls />
               </ReactFlow>
             </ReactFlowProvider>

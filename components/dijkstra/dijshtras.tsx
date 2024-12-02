@@ -1,13 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, MouseEvent } from "react";
 import "./dijshtras.styles.css";
 
+// Typed interfaces for better type safety
+interface NeighborNode {
+  node: string;
+  weight: number;
+}
+
+interface EdgeType {
+  vertex1: string;
+  vertex2: string;
+  weight: number;
+}
+
+interface NodePosition {
+  x: number;
+  y: number;
+}
+
+interface PriorityQueueItem {
+  val: string;
+  priority: number;
+}
+
+interface ShortestPathResult {
+  path: string[];
+  distance: number;
+}
+
 class Graph {
+  adjacencyList: { [key: string]: NeighborNode[] };
+  positions: { [key: string]: NodePosition };
+
   constructor() {
     this.adjacencyList = {};
     this.positions = {};
   }
 
-  generateOptimalLayout(nodes) {
+  generateOptimalLayout(nodes: string[]): { [key: string]: NodePosition } {
     const width = 1000;
     const height = 400;
     const nodeCount = nodes.length;
@@ -16,7 +46,7 @@ class Graph {
     const centerY = height / 2;
     const maxRadius = Math.min(width, height) * 0.4;
 
-    return nodes.reduce((acc, node, index) => {
+    return nodes.reduce((acc: { [key: string]: NodePosition }, node, index) => {
       const angleStep = (2 * Math.PI) / Math.max(1, nodeCount);
       const angle = index * angleStep;
       const radius = Math.min(maxRadius, (index + 1) * 40);
@@ -29,13 +59,18 @@ class Graph {
     }, {});
   }
 
-  addVertex(vertex) {
+  addVertex(vertex: string): void {
     if (!this.adjacencyList[vertex]) {
       this.adjacencyList[vertex] = [];
     }
   }
 
-  addEdge(vertex1, vertex2, weight, isDirected) {
+  addEdge(
+    vertex1: string,
+    vertex2: string,
+    weight: number,
+    isDirected: boolean
+  ): void {
     this.addVertex(vertex1);
     this.addVertex(vertex2);
 
@@ -45,12 +80,12 @@ class Graph {
     }
   }
 
-  dijkstra(start, end) {
+  dijkstra(start: string, end: string): ShortestPathResult {
     const nodes = new PriorityQueue();
-    const distances = {};
-    const previous = {};
-    let path = [];
-    let smallest;
+    const distances: { [key: string]: number } = {};
+    const previous: { [key: string]: string | null } = {};
+    let path: string[] = [];
+    let smallest: string = start;
 
     for (let vertex in this.adjacencyList) {
       if (vertex === start) {
@@ -69,7 +104,7 @@ class Graph {
       if (smallest === end) {
         while (previous[smallest]) {
           path.push(smallest);
-          smallest = previous[smallest];
+          smallest = previous[smallest]!;
         }
         break;
       }
@@ -96,44 +131,52 @@ class Graph {
 }
 
 class PriorityQueue {
+  values: PriorityQueueItem[];
+
   constructor() {
     this.values = [];
   }
 
-  enqueue(val, priority) {
+  enqueue(val: string, priority: number): void {
     this.values.push({ val, priority });
     this.sort();
   }
 
-  dequeue() {
-    return this.values.shift();
+  dequeue(): PriorityQueueItem {
+    return this.values.shift()!;
   }
 
-  sort() {
+  sort(): void {
     this.values.sort((a, b) => a.priority - b.priority);
   }
 }
 
-const GraphVisualizer = () => {
-  const [graph, setGraph] = useState(new Graph());
-  const [isDirected, setIsDirected] = useState(false);
-  const [edges, setEdges] = useState([]);
-  const [vertex1, setVertex1] = useState("");
-  const [vertex2, setVertex2] = useState("");
-  const [weight, setWeight] = useState("");
-  const [startNode, setStartNode] = useState("");
-  const [endNode, setEndNode] = useState("");
-  const [shortestPath, setShortestPath] = useState(null);
-  const [animationStep, setAnimationStep] = useState(0);
-  const [currentPath, setCurrentPath] = useState([]);
-  const [nodePositions, setNodePositions] = useState({});
-  const [draggedNode, setDraggedNode] = useState(null);
-  const [offset, setOffset] = useState({ x: 0, y: 0 });
+const GraphVisualizer: React.FC = () => {
+  const [graph, setGraph] = useState<Graph>(new Graph());
+  const [isDirected, setIsDirected] = useState<boolean>(false);
+  const [edges, setEdges] = useState<EdgeType[]>([]);
+  const [vertex1, setVertex1] = useState<string>("");
+  const [vertex2, setVertex2] = useState<string>("");
+  const [weight, setWeight] = useState<string>("");
+  const [startNode, setStartNode] = useState<string>("");
+  const [endNode, setEndNode] = useState<string>("");
+  const [shortestPath, setShortestPath] = useState<ShortestPathResult | null>(
+    null
+  );
+  const [animationStep, setAnimationStep] = useState<number>(0);
+  const [currentPath, setCurrentPath] = useState<string[]>([]);
+  const [nodePositions, setNodePositions] = useState<{
+    [key: string]: NodePosition;
+  }>({});
+  const [draggedNode, setDraggedNode] = useState<string | null>(null);
+  const [offset, setOffset] = useState<NodePosition>({ x: 0, y: 0 });
 
   const MAX_EDGES = 10;
 
-  const handleDragStart = (e, node) => {
-    const svgRect = e.target.closest("svg").getBoundingClientRect();
+  const handleDragStart = (e: MouseEvent<SVGGElement>, node: string) => {
+    const svgRect = (
+      e.currentTarget.closest("svg") as SVGSVGElement
+    ).getBoundingClientRect();
     const offsetX = e.clientX - svgRect.left - nodePositions[node].x;
     const offsetY = e.clientY - svgRect.top - nodePositions[node].y;
 
@@ -141,10 +184,10 @@ const GraphVisualizer = () => {
     setOffset({ x: offsetX, y: offsetY });
   };
 
-  const handleDrag = (e) => {
+  const handleDrag = (e: MouseEvent<SVGSVGElement>) => {
     if (!draggedNode) return;
 
-    const svgRect = e.target.closest("svg").getBoundingClientRect();
+    const svgRect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
     const x = Math.max(20, Math.min(580, e.clientX - svgRect.left - offset.x));
     const y = Math.max(20, Math.min(380, e.clientY - svgRect.top - offset.y));
 
@@ -159,9 +202,9 @@ const GraphVisualizer = () => {
   };
 
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       if (draggedNode) {
-        handleDrag(e);
+        handleDrag(e as unknown as MouseEvent<SVGSVGElement>);
       }
     };
 
@@ -171,11 +214,17 @@ const GraphVisualizer = () => {
       }
     };
 
-    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener(
+      "mousemove",
+      handleMouseMove as unknown as EventListener
+    );
     window.addEventListener("mouseup", handleMouseUp);
 
     return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener(
+        "mousemove",
+        handleMouseMove as unknown as EventListener
+      );
       window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [draggedNode]);
@@ -251,13 +300,15 @@ const GraphVisualizer = () => {
   };
 
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout | null = null;
     if (shortestPath && animationStep < currentPath.length - 1) {
       timer = setTimeout(() => {
         setAnimationStep((prev) => prev + 1);
       }, 1000);
     }
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [shortestPath, animationStep, currentPath]);
 
   const uniqueNodes = [

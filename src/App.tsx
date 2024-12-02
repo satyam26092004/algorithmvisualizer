@@ -1,27 +1,44 @@
-import React from 'react';
-import { useState, useRef, useEffect } from "react";
+import React, { Suspense, useState, useRef, useEffect } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { gsap } from "gsap";
 import { X } from "lucide-react";
-import SelectionSortSimulation from './components/SelectionSort/selectionSort';
-
-const BubbleSortSimulation = React.lazy(() => import("./components/BubbleSort/BubbleSort"));
-const DijkstraVisualizer = React.lazy(() => import("./components/Dijkstra/Dijkstra"));
-const RecursionTreeVisualizer = React.lazy(() => import("./components/MergeSort/MergeSort"));
-const QuickSortVisualizer = React.lazy(() => import("./components/QuickSort/QuickSort"));
-const KruskalVisualization = React.lazy(() => import("./components/Kruskal/Kruskal"));
-const BFSVisualization = React.lazy(() => import("./components/BFS/BFS"));
-const DFSVisualization = React.lazy(() => import("./components/DFS/DFS"));
-const GraphVisualizer = React.lazy(() => import("./components/Prims/Prims"));
-const TreeTraversalVisualizer = React.lazy(() => import("./components/TreeTraversal/Traversal"));
-const AnimatedVisualizer = React.lazy(() => import("./components/Backtracking/Backtracking"));
 import './app.css';
 
+// Lazy loaded algorithm components
+const SelectionSortSimulation = React.lazy(() => import('../components/selectionSort/selectionSort'));
+const BubbleSortSimulation = React.lazy(() => import("../components/BubbleSort/BubbleSort"));
+const DijkstraVisualizer = React.lazy(() => import("../components/dijkstra/dijshtras"));
+const RecursionTreeVisualizer = React.lazy(() => import("../components/MergeSort/MergeSort"));
+const QuickSortVisualizer = React.lazy(() => import("../components/QuickSort/QuickSort"));
+const KruskalVisualization = React.lazy(() => import("../components/Kruskal/Kruskal"));
+const BFSVisualization = React.lazy(() => import("../components/BFS/BFS"));
+const DFSVisualization = React.lazy(() => import("../components/DFS/DFS"));
+const GraphVisualizer = React.lazy(() => import("../components/Prims/Prims"));
+const TreeTraversalVisualizer = React.lazy(() => import("../components/TreeTraversal/Traversal"));
+const AnimatedVisualizer = React.lazy(() => import("../components/Backtracking/Backtracking"));
+
+// Error Fallback Component
+const ErrorFallback = ({ error, resetErrorBoundary }: { 
+  error: Error, 
+  resetErrorBoundary: () => void 
+}) => {
+  return (
+    <div role="alert" className="error-fallback">
+      <h2>Oops! Something went wrong</h2>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+      <button onClick={resetErrorBoundary}>Reset Application</button>
+    </div>
+  );
+};
+
+// Algorithm interface
 interface Algorithm {
   id: string;
   label: string;
   component: React.ComponentType;
 }
 
+// Define algorithms array
 const algorithms: Algorithm[] = [
   { id: "selectionSort", label: "Selection Sort", component: SelectionSortSimulation },
   { id: "bubbleSort", label: "Bubble Sort", component: BubbleSortSimulation },
@@ -36,6 +53,7 @@ const algorithms: Algorithm[] = [
   { id: "animated", label: "Backtracking", component: AnimatedVisualizer },
 ];
 
+// Loading Page Component
 interface LoadingPageProps {
   onLoadComplete: () => void;
 }
@@ -124,6 +142,7 @@ const LoadingPage: React.FC<LoadingPageProps> = ({ onLoadComplete }) => {
   );
 };
 
+// Main App Component
 const App: React.FC = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<string>(algorithms[0].id);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
@@ -140,6 +159,7 @@ const App: React.FC = () => {
     setIsSidebarOpen(prev => !prev);
   };
 
+  // Sidebar outside click handler
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (isSidebarOpen && 
@@ -154,6 +174,7 @@ const App: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isSidebarOpen]);
 
+  // Sidebar animation
   useEffect(() => {
     const sidebar = sidebarRef.current;
     const menuItems = menuItemsRef.current.filter(Boolean) as HTMLDivElement[];
@@ -195,6 +216,7 @@ const App: React.FC = () => {
     return () => ctx.revert();
   }, [isSidebarOpen]);
 
+  // Main content animation
   useEffect(() => {
     const mainContent = mainContentRef.current;
     
@@ -211,46 +233,60 @@ const App: React.FC = () => {
     }
   }, [isLoading]);
 
+  // Find selected component
   const SelectedComponent = algorithms.find((alg) => alg.id === selectedAlgorithm)?.component;
+
+  // Global error reset handler
+  const handleErrorReset = () => {
+    setSelectedAlgorithm(algorithms[0].id);
+    setIsSidebarOpen(false);
+  };
 
   return (
     <div className="content">
       {isLoading ? (
         <LoadingPage onLoadComplete={() => setIsLoading(false)} />
       ) : (
-        <div className="app-container">
-          <button 
-            className={`toggle-button ${isSidebarOpen ? 'open' : ''}`}
-            onClick={toggleSidebar}
-          >
-            {isSidebarOpen ? (
-              <X className="icon" />
-            ) : (
-              "☰"
-            )}
-          </button>
-
-          <div ref={sidebarRef} className="sidebar">
-            <h2 className="sidebar-title">Algorithms</h2>
-            {algorithms.map(({ id, label }, index) => (
-              <div
-                key={id}
-                ref={el => menuItemsRef.current[index] = el}
-                className={`menu-item ${selectedAlgorithm === id ? 'active' : ''}`}
-                onClick={() => {
-                  handleSelectAlgorithm(id);
-                  setIsSidebarOpen(false);
-                }}
+        <ErrorBoundary 
+          FallbackComponent={ErrorFallback}
+          onReset={handleErrorReset}
+        >
+          <Suspense fallback={<div>Loading Algorithm...</div>}>
+            <div className="app-container">
+              <button 
+                className={`toggle-button ${isSidebarOpen ? 'open' : ''}`}
+                onClick={toggleSidebar}
               >
-                {label}
+                {isSidebarOpen ? (
+                  <X className="icon" />
+                ) : (
+                  "☰"
+                )}
+              </button>
+
+              <div ref={sidebarRef} className="sidebar">
+                <h2 className="sidebar-title">Algorithms</h2>
+                {algorithms.map(({ id, label }, index) => (
+                  <div
+                    key={id}
+                    ref={el => menuItemsRef.current[index] = el}
+                    className={`menu-item ${selectedAlgorithm === id ? 'active' : ''}`}
+                    onClick={() => {
+                      handleSelectAlgorithm(id);
+                      setIsSidebarOpen(false);
+                    }}
+                  >
+                    {label}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <p className="title">ALGORITHM VISUALIZER</p>
-          <div ref={mainContentRef} className="content">
-            {SelectedComponent ? <SelectedComponent /> : <p>Select an algorithm to visualize.</p>}
-          </div>
-        </div>
+              <p className="title">ALGORITHM VISUALIZER</p>
+              <div ref={mainContentRef} className="content">
+                {SelectedComponent ? <SelectedComponent /> : <p>Select an algorithm to visualize.</p>}
+              </div>
+            </div>
+          </Suspense>
+        </ErrorBoundary>
       )}
     </div>
   );

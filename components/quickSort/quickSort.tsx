@@ -5,7 +5,7 @@ import ReactFlow, {
   useEdgesState,
   Node,
   Edge,
-  Background,
+  Background,BackgroundVariant,
   Controls,
   Handle,
   Position,
@@ -469,7 +469,7 @@ const QuickSortVisualization: React.FC = () => {
                   alignItems: "center",
                 }}
               >
-                <Background variant="dots" gap={50} />
+              <Background variant={BackgroundVariant.Dots} gap={50} />
                 <Controls />
               </ReactFlow>
             </ReactFlowProvider>

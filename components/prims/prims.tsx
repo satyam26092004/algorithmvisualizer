@@ -56,6 +56,7 @@ const GraphVisualizer: React.FC = () => {
 
   // Handle node dragging
   const handleMouseDown = (nodeId: number, e: React.MouseEvent): void => {
+    console.log(e);
     if (isRunning) return;
     setDraggingNode(nodeId);
   };

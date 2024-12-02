@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
 import Prism from 'prismjs';
-import 'prismjs/themes/prism-okaidia.css'; // Using Okaidia theme for better colors
+import 'prismjs/themes/prism-okaidia.css';
 import 'prismjs/components/prism-python';
 import 'prismjs/components/prism-typescript';
 import { Copy, Check } from 'lucide-react';
 import "./bubble.styles.css";
 
-const BubbleSort = () => {
-  const [array, setArray] = useState([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isSorting, setIsSorting] = useState(false);
-  const [activeTab, setActiveTab] = useState("visualization");
-  const [activeLanguage, setActiveLanguage] = useState('python');
-  const [highlighted, setHighlighted] = useState({ i: -1, j: -1 });
-  const [copiedCode, setCopiedCode] = useState(false);
+type Language = 'python' | 'javascript' | 'typescript';
+
+const BubbleSort: React.FC = () => {
+  const [array, setArray] = useState<number[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
+  const [isSorting, setIsSorting] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>("visualization");
+  const [activeLanguage, setActiveLanguage] = useState<Language>('python');
+  const [highlighted, setHighlighted] = useState<{i: number, j: number}>({ i: -1, j: -1 });
+  const [copiedCode, setCopiedCode] = useState<boolean>(false);
 
   useEffect(() => {
     Prism.highlightAll();
@@ -29,85 +31,7 @@ const BubbleSort = () => {
   const minValue = 5;
   const sortingDelay = 500;
 
-  
-
-  const handleCopyCode = async () => {
-    try {
-      await navigator.clipboard.writeText(codeExamples[activeLanguage]);
-      setCopiedCode(true);
-      setTimeout(() => setCopiedCode(false), 2000); // Reset after 2 seconds
-    } catch (err) {
-      console.error('Failed to copy code:', err);
-    }
-  };
-
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const inputArray = inputValue
-      .split(",")
-      .map((num) => parseInt(num.trim()))
-      .filter((num) => !isNaN(num) && num >= minValue && num <= maxValue);
-
-    if (inputArray.length > maxArrayLength) {
-      alert(`Please enter no more than ${maxArrayLength} numbers.`);
-      return;
-    }
-
-    if (inputArray.length === 0) {
-      alert(`Please enter valid numbers between ${minValue} and ${maxValue}.`);
-      return;
-    }
-
-    setArray(inputArray);
-    setInputValue("");
-    setHighlighted({ i: -1, j: -1 });
-  };
-
-  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-  const bubbleSort = async () => {
-    if (isSorting || array.length === 0) return;
-    
-    setIsSorting(true);
-    const n = array.length;
-    const newArray = [...array];
-
-    for (let i = 0; i < n - 1; i++) {
-      let swapped = false;
-      
-      for (let j = 0; j < n - i - 1; j++) {
-        setHighlighted({ i: j, j: j + 1 });
-        await sleep(sortingDelay);
-
-        if (newArray[j] > newArray[j + 1]) {
-          [newArray[j], newArray[j + 1]] = [newArray[j + 1], newArray[j]];
-          setArray([...newArray]);
-          swapped = true;
-        }
-      }
-
-      if (!swapped) break;
-    }
-
-    setHighlighted({ i: -1, j: -1 });
-    setIsSorting(false);
-  };
-
-  const getBarColor = (index) => {
-    if (index === highlighted.i || index === highlighted.j) {
-      return "#FCD34D";
-    }
-    if (index > array.length - highlighted.i - 1) {
-      return "#10B981";
-    }
-    return "#60A5FA";
-  };
-
-  const codeExamples = {
+  const codeExamples: Record<Language, string> = {
     python: `def bubble_sort(arr):
     n = len(arr)
     for i in range(n):
@@ -150,6 +74,83 @@ const BubbleSort = () => {
 }`
   };
 
+  const handleCopyCode = async () => {
+    try {
+      await navigator.clipboard.writeText(codeExamples[activeLanguage]);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy code:', err);
+    }
+  };
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const inputArray = inputValue
+      .split(",")
+      .map((num) => parseInt(num.trim()))
+      .filter((num) => !isNaN(num) && num >= minValue && num <= maxValue);
+
+    if (inputArray.length > maxArrayLength) {
+      alert(`Please enter no more than ${maxArrayLength} numbers.`);
+      return;
+    }
+
+    if (inputArray.length === 0) {
+      alert(`Please enter valid numbers between ${minValue} and ${maxValue}.`);
+      return;
+    }
+
+    setArray(inputArray);
+    setInputValue("");
+    setHighlighted({ i: -1, j: -1 });
+  };
+
+  const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const bubbleSort = async () => {
+    if (isSorting || array.length === 0) return;
+    
+    setIsSorting(true);
+    const n = array.length;
+    const newArray = [...array];
+
+    for (let i = 0; i < n - 1; i++) {
+      let swapped = false;
+      
+      for (let j = 0; j < n - i - 1; j++) {
+        setHighlighted({ i: j, j: j + 1 });
+        await sleep(sortingDelay);
+
+        if (newArray[j] > newArray[j + 1]) {
+          [newArray[j], newArray[j + 1]] = [newArray[j + 1], newArray[j]];
+          setArray([...newArray]);
+          swapped = true;
+        }
+      }
+
+      if (!swapped) break;
+    }
+
+    setHighlighted({ i: -1, j: -1 });
+    setIsSorting(false);
+  };
+
+  const getBarColor = (index: number) => {
+    if (index === highlighted.i || index === highlighted.j) {
+      return "#FCD34D";
+    }
+    if (index > array.length - highlighted.i - 1) {
+      return "#10B981";
+    }
+    return "#60A5FA";
+  };
+
+  
   const complexityInfo = {
     timeComplexity: {
       best: "O(n) - When array is already sorted",

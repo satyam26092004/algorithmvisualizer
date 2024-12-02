@@ -1,15 +1,31 @@
 import React, { useState, useEffect } from "react";
 
+// Define proper types
+interface QueenStep {
+  board: boolean[][];
+  message: string;
+}
 
-const AnimatedVisualizer = () => {
+interface ColorStep {
+  colorMap: Record<number, string>;
+  message: string;
+}
+
+interface Node {
+  id: number;
+  x: number;
+  y: number;
+}
+
+const AnimatedVisualizer: React.FC = () => {
   // State for N-Queens
-  const [boardSize, setBoardSize] = useState(8);
-  const [queenSteps, setQueenSteps] = useState([]);
-  const [currentQueenStep, setCurrentQueenStep] = useState(0);
-  const [isQueenAnimating, setIsQueenAnimating] = useState(false);
+  const [boardSize, setBoardSize] = useState<number>(8);
+  const [queenSteps, setQueenSteps] = useState<QueenStep[]>([]);
+  const [currentQueenStep, setCurrentQueenStep] = useState<number>(0);
+  const [isQueenAnimating, setIsQueenAnimating] = useState<boolean>(false);
 
   // State for Graph Coloring
-  const [nodes] = useState([
+  const [nodes] = useState<Node[]>([
     { id: 0, x: 200, y: 100 },
     { id: 1, x: 300, y: 100 },
     { id: 2, x: 250, y: 200 },
@@ -20,66 +36,31 @@ const AnimatedVisualizer = () => {
     { id: 7, x: 300, y: 300 },
     { id: 8, x: 400, y: 300 },
     { id: 9, x: 250, y: 400 },
-    { id: 10, x: 50, y: 400 }, // New node
-    { id: 11, x: 450, y: 400 }, // New node
-    { id: 12, x: 150, y: 500 }, // New node
-    { id: 13, x: 350, y: 500 }, // New node
+    { id: 10, x: 50, y: 400 },
+    { id: 11, x: 450, y: 400 },
+    { id: 12, x: 150, y: 500 },
+    { id: 13, x: 350, y: 500 },
   ]);
 
-  const [edges] = useState([
-    [0, 1],
-    [0, 2],
-    [0, 3],
-    [1, 2],
-    [1, 4],
-    [2, 3],
-    [2, 4],
-    [3, 4],
-    [5, 3],
-    [5, 0],
-    [5, 6],
-    [6, 1],
-    [6, 7],
-    [7, 8],
-    [8, 9],
-    [9, 2],
-    [10, 5], // New edges
-    [10, 12], // New edges
-    [11, 4], // New edges
-    [11, 8], // New edges
-    [12, 3], // New edges
-    [12, 13], // New edges
-    [13, 4], // New edges
-    [13, 9], // New edges
+  const [edges] = useState<number[][]>([
+    [0, 1], [0, 2], [0, 3], [1, 2], [1, 4], [2, 3], [2, 4], [3, 4],
+    [5, 3], [5, 0], [5, 6], [6, 1], [6, 7], [7, 8], [8, 9], [9, 2],
+    [10, 5], [10, 12], [11, 4], [11, 8], [12, 3], [12, 13], [13, 4], [13, 9],
   ]);
-  const [coloringSteps, setColoringSteps] = useState([]);
-  const [currentColorStep, setCurrentColorStep] = useState(0);
-  const [isColorAnimating, setIsColorAnimating] = useState(false);
-  const colors = [
-    "#FF4444", // Red
-    "#44FF44", // Green
-    "#4444FF", // Blue
-    "#FFFF44", // Yellow
-    "#FF44FF", // Magenta
-    "#44FFFF", // Cyan
-    "#FFA500", // Orange
-    "#800080", // Purple
-    "#FFC0CB", // Pink
-    "#A52A2A", // Brown
-    "#FFD700", // Gold
-    "#00FF00", // Lime
-    "#0000FF", // Dark Blue
-    "#FF1493", // Deep Pink
-    "#8A2BE2", // Blue Violet
-    "#7FFF00", // Chartreuse
-    "#D2691E", // Chocolate
-    "#FF4500", // Orange Red
-    "#2E8B57", // Sea Green
-    "#4682B4", // Steel Blue
+
+  const [coloringSteps, setColoringSteps] = useState<ColorStep[]>([]);
+  const [currentColorStep, setCurrentColorStep] = useState<number>(0);
+  const [isColorAnimating, setIsColorAnimating] = useState<boolean>(false);
+
+  const colors: string[] = [
+    "#FF4444", "#44FF44", "#4444FF", "#FFFF44", "#FF44FF", 
+    "#44FFFF", "#FFA500", "#800080", "#FFC0CB", "#A52A2A", 
+    "#FFD700", "#00FF00", "#0000FF", "#FF1493", "#8A2BE2", 
+    "#7FFF00", "#D2691E", "#FF4500", "#2E8B57", "#4682B4"
   ];
 
   // N-Queens Logic
-  const isSafe = (board, row, col) => {
+  const isSafe = (board: boolean[][], row: number, col: number): boolean => {
     for (let i = 0; i < col; i++) {
       if (board[row][i]) return false;
     }
@@ -93,12 +74,12 @@ const AnimatedVisualizer = () => {
   };
 
   const solveNQueens = () => {
-    const board = Array(boardSize)
-      .fill()
+    const board: boolean[][] = Array(boardSize)
+      .fill(null)
       .map(() => Array(boardSize).fill(false));
-    const steps = [];
+    const steps: QueenStep[] = [];
 
-    const solve = (board, col) => {
+    const solve = (board: boolean[][], col: number): boolean => {
       if (col >= boardSize) return true;
 
       for (let row = 0; row < boardSize; row++) {
@@ -129,30 +110,30 @@ const AnimatedVisualizer = () => {
 
   // Graph Coloring Logic
   const solveGraphColoring = () => {
-    const steps = [];
-    const colorMap = {};
+    const steps: ColorStep[] = [];
+    const colorMap: Record<number, string> = {};
 
-    const solve = (nodeIndex = 0) => {
-      if (nodeIndex === nodes.length) return true; // All nodes are colored
+    const solve = (nodeIndex: number = 0): boolean => {
+      if (nodeIndex === nodes.length) return true;
 
-      for (let color of colors) {
+      for (const color of colors) {
         if (isColorSafe(colorMap, nodeIndex, color)) {
-          colorMap[nodeIndex] = color; // Assign color to the node
+          colorMap[nodeIndex] = color;
           steps.push({
             colorMap: { ...colorMap },
             message: `Coloring node ${nodeIndex} with ${color}`,
           });
 
-          if (solve(nodeIndex + 1)) return true; // Recur to color the next node
+          if (solve(nodeIndex + 1)) return true;
 
-          delete colorMap[nodeIndex]; // Backtrack
+          delete colorMap[nodeIndex];
           steps.push({
             colorMap: { ...colorMap },
             message: `Backtracking: removing color from node ${nodeIndex}`,
           });
         }
       }
-      return false; // No valid color found
+      return false;
     };
 
     solve();
@@ -161,14 +142,19 @@ const AnimatedVisualizer = () => {
     startColorAnimation();
   };
 
-  const isColorSafe = (colorMap, nodeId, color) => {
+  const isColorSafe = (
+    colorMap: Record<number, string>, 
+    nodeId: number, 
+    color: string
+  ): boolean => {
     return edges.every(([a, b]) => {
-      if (a === nodeId) return colorMap[b] !== color; // Check if adjacent node has the same color
-      if (b === nodeId) return colorMap[a] !== color; // Check if adjacent node has the same color
-      return true; // Not adjacent
+      if (a === nodeId) return colorMap[b] !== color;
+      if (b === nodeId) return colorMap[a] !== color;
+      return true;
     });
   };
-  // Animation Control
+
+  // Animation Control Methods (remain largely the same)
   const startQueenAnimation = () => {
     setIsQueenAnimating(true);
   };
@@ -214,7 +200,7 @@ const AnimatedVisualizer = () => {
   };
 
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout | null = null;
     if (isQueenAnimating && currentQueenStep < queenSteps.length - 1) {
       timer = setTimeout(() => {
         setCurrentQueenStep((prev) => prev + 1);
@@ -222,11 +208,13 @@ const AnimatedVisualizer = () => {
     } else if (isQueenAnimating) {
       setIsQueenAnimating(false);
     }
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isQueenAnimating, currentQueenStep, queenSteps.length]);
 
   useEffect(() => {
-    let timer;
+    let timer: NodeJS.Timeout | null = null;
     if (isColorAnimating && currentColorStep < coloringSteps.length - 1) {
       timer = setTimeout(() => {
         setCurrentColorStep((prev) => prev + 1);
@@ -234,10 +222,10 @@ const AnimatedVisualizer = () => {
     } else if (isColorAnimating) {
       setIsColorAnimating(false);
     }
-    return () => clearTimeout(timer);
+    return () => {
+      if (timer) clearTimeout(timer);
+    };
   }, [isColorAnimating, currentColorStep, coloringSteps.length]);
-
-  // Styles
   const styles = {
     container: {
       display: "flex",
@@ -393,10 +381,10 @@ const AnimatedVisualizer = () => {
           }}
         >
           {Array(boardSize)
-            .fill()
+            .fill(null)
             .map((_, row) =>
               Array(boardSize)
-                .fill()
+                .fill(null)
                 .map((_, col) => (
                   <div
                     key={`${row}-${col}`}
@@ -553,7 +541,7 @@ const AnimatedVisualizer = () => {
           style={styles.button}
           onClick={() => !isColorAnimating && solveGraphColoring()}
           disabled={isColorAnimating}
-          styles={{margin:'5px'}}
+        
         >
           {isColorAnimating ? "Coloring..." : "Start Graph Coloring"}
         </button>
@@ -561,7 +549,7 @@ const AnimatedVisualizer = () => {
          style={styles.button}
           onClick={resetGraphColoring}
           disabled={!coloringSteps.length}
-          styles={{margin:'5px'}}
+          
         >
           Reset Graph Coloring
         </button>

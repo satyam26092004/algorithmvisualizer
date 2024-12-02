@@ -1,25 +1,46 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './dfs.styles.css';
 
-const DFSVisualizer = () => {
-  const [nodes, setNodes] = useState([]);
-  const [edges, setEdges] = useState([]);
-  const [visited, setVisited] = useState(new Set());
-  const [currentPath, setCurrentPath] = useState([]);
-  const [isRunning, setIsRunning] = useState(false);
-  const [speed, setSpeed] = useState(1000);
-  const [nodeCount, setNodeCount] = useState(6);
-  const [startNode, setStartNode] = useState(0);
-  const [newEdge, setNewEdge] = useState({ from: '', to: '' });
-  const [error, setError] = useState('');
-  const [draggingNode, setDraggingNode] = useState(null);
-  const svgRef = useRef(null);
-  const [adjacencyList, setAdjacencyList] = useState({});
-  const runningRef = useRef(false);
+// Type definitions
+interface Node {
+  id: number;
+  x: number;
+  y: number;
+}
+
+interface Edge {
+  from: number;
+  to: number;
+}
+
+interface NewEdgeState {
+  from: string;
+  to: string;
+}
+
+interface AdjacencyList {
+  [key: number]: number[];
+}
+
+const DFSVisualizer: React.FC = () => {
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
+  const [visited, setVisited] = useState<Set<number>>(new Set());
+  const [currentPath, setCurrentPath] = useState<number[]>([]);
+  const [isRunning, setIsRunning] = useState<boolean>(false);
+  const [speed, setSpeed] = useState<number>(1000);
+  const [nodeCount, setNodeCount] = useState<number>(6);
+  const [startNode, setStartNode] = useState<number>(0);
+  const [newEdge, setNewEdge] = useState<NewEdgeState>({ from: '', to: '' });
+  const [error, setError] = useState<string>('');
+  const [draggingNode, setDraggingNode] = useState<number | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [adjacencyList, setAdjacencyList] = useState<AdjacencyList>({});
+  const runningRef = useRef<boolean>(false);
 
   // Generate nodes in a circular layout
   const generateNodes = () => {
-    const newNodes = [];
+    const newNodes: Node[] = [];
     const radius = 150;
     const centerX = 200;
     const centerY = 200;
@@ -44,13 +65,14 @@ const DFSVisualizer = () => {
   }, [nodeCount]);
 
   // Handle node dragging
-  const handleMouseDown = (nodeId, e) => {
+  const handleMouseDown = (nodeId: number, e: React.MouseEvent) => {
     if (isRunning) return;
+    console.log(e);
     setDraggingNode(nodeId);
   };
 
-  const handleMouseMove = (e) => {
-    if (draggingNode === null || isRunning) return;
+  const handleMouseMove = (e: MouseEvent) => {
+    if (draggingNode === null || isRunning || !svgRef.current) return;
 
     const svg = svgRef.current;
     const rect = svg.getBoundingClientRect();
@@ -102,7 +124,7 @@ const DFSVisualizer = () => {
       return;
     }
 
-    const newEdgeObj = { from, to };
+    const newEdgeObj: Edge = { from, to };
     setEdges(prevEdges => [...prevEdges, newEdgeObj]);
     
     setAdjacencyList(prev => {
@@ -118,7 +140,7 @@ const DFSVisualizer = () => {
     setNewEdge({ from: '', to: '' });
   };
 
-  const removeEdge = (index) => {
+  const removeEdge = (index: number) => {
     const edgeToRemove = edges[index];
     setEdges(edges.filter((_, i) => i !== index));
     
@@ -130,10 +152,10 @@ const DFSVisualizer = () => {
     });
   };
 
-  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+  const sleep = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
 
   // DFS implementation
-  const dfs = async (node, visited = new Set(), path = []) => {
+  const dfs = async (node: number, visited: Set<number> = new Set(), path: number[] = []): Promise<void> => {
     if (!runningRef.current) return;
 
     visited.add(node);

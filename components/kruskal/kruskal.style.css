@@ -1,5 +1,12 @@
 /* KruskalVisualizer.css */
-
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bodoni+Moda+SC:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Bona+Nova+SC:ital,wght@0,400;0,700;1,400&family=Crete+Round:ital@0;1&family=Dancing+Script:wght@400..700&family=Lora:ital,wght@0,400..700;1,400..700&family=Moon+Dance&family=Oleo+Script:wght@400;700&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+*{
+  box-sizing: border-box;
+  font-family: "Crete Round", serif;
+  font-weight: 400;
+  font-style: italic;
+  
+}
 .kruskal-visualizer {
     padding: 24px;
     max-width: 1200px;

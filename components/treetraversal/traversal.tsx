@@ -6,56 +6,105 @@ import React, {
   useEffect,
 } from "react";
 import "./traversal.styles.css";
-import levelImage from "/src/assets/level.jpg"; // Adjust the path as necessary
+
+// Improved Tree Node interface with explicit types
+interface TreeNodeInterface {
+  value: number;
+  left: TreeNodeInterface | null;
+  right: TreeNodeInterface | null;
+  id: string;
+}
 
 // Binary Tree Node Class (modified to allow duplicate values)
-class TreeNode {
-  constructor(value, id = null) {
+class TreeNode implements TreeNodeInterface {
+  value: number;
+  left: TreeNodeInterface | null = null;
+  right: TreeNodeInterface | null = null;
+  id: string;
+
+  constructor(value: number, id: string | null = null) {
     this.value = value;
-    this.left = null;
-    this.right = null;
     // Unique identifier to distinguish nodes with same value
     this.id = id || `${value}-${Math.random().toString(36).substr(2, 9)}`;
   }
 }
 
-// Tree Traversal Utility Class
+// Tree Traversal Utility Class with TypeScript type annotations
 class TreeTraversal {
-  static preorder(node, result = [], path = []) {
-    if (!node) return { result, path };
-    result.push(node.value);
-    path.push(node);
-    this.preorder(node.left, result, path);
-    this.preorder(node.right, result, path);
+  static preorder(node: TreeNodeInterface | null): {
+    result: number[];
+    path: TreeNodeInterface[];
+  } {
+    const result: number[] = [];
+    const path: TreeNodeInterface[] = [];
+
+    const traverse = (currentNode: TreeNodeInterface | null) => {
+      if (!currentNode) return;
+
+      result.push(currentNode.value);
+      path.push(currentNode);
+
+      traverse(currentNode.left);
+      traverse(currentNode.right);
+    };
+
+    traverse(node);
     return { result, path };
   }
 
-  static inorder(node, result = [], path = []) {
-    if (!node) return { result, path };
-    this.inorder(node.left, result, path);
-    result.push(node.value);
-    path.push(node);
-    this.inorder(node.right, result, path);
+  static inorder(node: TreeNodeInterface | null): {
+    result: number[];
+    path: TreeNodeInterface[];
+  } {
+    const result: number[] = [];
+    const path: TreeNodeInterface[] = [];
+
+    const traverse = (currentNode: TreeNodeInterface | null) => {
+      if (!currentNode) return;
+
+      traverse(currentNode.left);
+      result.push(currentNode.value);
+      path.push(currentNode);
+      traverse(currentNode.right);
+    };
+
+    traverse(node);
     return { result, path };
   }
 
-  static postorder(node, result = [], path = []) {
-    if (!node) return { result, path };
-    this.postorder(node.left, result, path);
-    this.postorder(node.right, result, path);
-    result.push(node.value);
-    path.push(node);
+  static postorder(node: TreeNodeInterface | null): {
+    result: number[];
+    path: TreeNodeInterface[];
+  } {
+    const result: number[] = [];
+    const path: TreeNodeInterface[] = [];
+
+    const traverse = (currentNode: TreeNodeInterface | null) => {
+      if (!currentNode) return;
+
+      traverse(currentNode.left);
+      traverse(currentNode.right);
+      result.push(currentNode.value);
+      path.push(currentNode);
+    };
+
+    traverse(node);
     return { result, path };
   }
 
-  static levelOrder(root) {
-    if (!root) return { result: [], path: [] };
-    const result = [];
-    const path = [];
-    const queue = [root];
+  static levelOrder(root: TreeNodeInterface | null): {
+    result: number[];
+    path: TreeNodeInterface[];
+  } {
+    const result: number[] = [];
+    const path: TreeNodeInterface[] = [];
+
+    if (!root) return { result, path };
+
+    const queue: TreeNodeInterface[] = [root];
 
     while (queue.length > 0) {
-      const node = queue.shift();
+      const node = queue.shift()!;
       result.push(node.value);
       path.push(node);
 
@@ -67,25 +116,48 @@ class TreeTraversal {
   }
 }
 
+// Define types for component props
+interface TreeVisualizationProps {
+  root: TreeNodeInterface | null;
+  highlightedNodes: TreeNodeInterface[];
+  onNodeMove?: (
+    node: TreeNodeInterface,
+    position: { x: number; y: number }
+  ) => void;
+}
+
+interface NodePosition {
+  x: number;
+  y: number;
+}
+
 // Tree Visualization Component with Improved Positioning
-const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
+const TreeVisualization: React.FC<TreeVisualizationProps> = ({
+  root,
+  highlightedNodes,
+  onNodeMove,
+}) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [draggedNode, setDraggedNode] = useState(null);
-  const [nodePositions, setNodePositions] = useState(new Map());
-  const svgRef = useRef(null);
+  const [draggedNode, setDraggedNode] = useState<TreeNodeInterface | null>(
+    null
+  );
+  const [nodePositions, setNodePositions] = useState<Map<string, NodePosition>>(
+    new Map()
+  );
+  const svgRef = useRef<SVGSVGElement>(null);
 
   // Improved Node Positioning Algorithm
   const calculateInitialPositions = useMemo(() => {
     const svgWidth = 800;
-    const svgHeight = 400;
     const nodeRadius = 30;
-    const horizontalSpacing = 60;
     const verticalSpacing = 100;
 
-    const initialPositions = new Map();
+    const initialPositions = new Map<string, NodePosition>();
 
     // Calculate tree depth and width first
-    const calculateTreeDimensions = (node) => {
+    const calculateTreeDimensions = (
+      node: TreeNodeInterface | null
+    ): { depth: number; width: number } => {
       if (!node) return { depth: 0, width: 0 };
 
       const leftDimensions = calculateTreeDimensions(node.left);
@@ -100,7 +172,13 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
     const treeDimensions = calculateTreeDimensions(root);
 
     // Recursive positioning with adaptive width and centering
-    const positionNodes = (node, x, y, level, horizontalOffset = 0) => {
+    const positionNodes = (
+      node: TreeNodeInterface | null,
+      x: number,
+      y: number,
+      level: number,
+      horizontalOffset = 0
+    ): { x: number; width: number } => {
       if (!node) return { x, width: 0 };
 
       // Calculate horizontal spread based on tree width
@@ -152,18 +230,17 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
   }, [calculateInitialPositions]);
 
   // Mouse down handler for node dragging
-  const handleMouseDown = (e, node) => {
+  const handleMouseDown = (e: React.MouseEvent, node: TreeNodeInterface) => {
     e.preventDefault();
     setIsDragging(true);
     setDraggedNode(node);
   };
 
   // Mouse move handler for dragging
-  const handleMouseMove = (e) => {
-    if (!isDragging || !draggedNode) return;
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!isDragging || !draggedNode || !svgRef.current) return;
 
-    const svg = svgRef.current;
-    const svgRect = svg.getBoundingClientRect();
+    const svgRect = svgRef.current.getBoundingClientRect();
 
     const x = e.clientX - svgRect.left;
     const y = e.clientY - svgRect.top;
@@ -174,9 +251,7 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
     setNodePositions(newPositions);
 
     // Optional: Notify parent component about node movement
-    if (onNodeMove) {
-      onNodeMove(draggedNode, { x, y });
-    }
+    onNodeMove?.(draggedNode, { x, y });
   };
 
   // Mouse up handler to stop dragging
@@ -197,7 +272,7 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
   }, [isDragging, draggedNode]);
 
   // Render individual node
-  const renderNode = (node) => {
+  const renderNode = (node: TreeNodeInterface) => {
     const position = nodePositions.get(node.id);
     if (!position) return null;
 
@@ -211,8 +286,8 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
           <line
             x1={position.x}
             y1={position.y + nodeRadius}
-            x2={nodePositions.get(node.left.id).x}
-            y2={nodePositions.get(node.left.id).y - nodeRadius}
+            x2={nodePositions.get(node.left.id)!.x}
+            y2={nodePositions.get(node.left.id)!.y - nodeRadius}
             stroke="#999"
             strokeWidth="2"
           />
@@ -221,8 +296,8 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
           <line
             x1={position.x}
             y1={position.y + nodeRadius}
-            x2={nodePositions.get(node.right.id).x}
-            y2={nodePositions.get(node.right.id).y - nodeRadius}
+            x2={nodePositions.get(node.right.id)!.x}
+            y2={nodePositions.get(node.right.id)!.y - nodeRadius}
             stroke="#999"
             strokeWidth="2"
           />
@@ -261,7 +336,9 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
   const renderTree = () => {
     if (!root) return null;
 
-    const traverseAndRender = (node) => {
+    const traverseAndRender = (
+      node: TreeNodeInterface | null
+    ): React.ReactNode => {
       if (!node) return null;
       return (
         <>
@@ -283,27 +360,31 @@ const TreeVisualization = ({ root, highlightedNodes, onNodeMove }) => {
 };
 
 // Main Traversal Visualizer Component
-const TreeTraversalVisualizer = () => {
+const TreeTraversalVisualizer: React.FC = () => {
   const [treeInput, setTreeInput] = useState("");
-  const [traversalType, setTraversalType] = useState("preorder");
-  const [traversalResult, setTraversalResult] = useState([]);
-  const [root, setRoot] = useState(null);
-  const [highlightedNodes, setHighlightedNodes] = useState([]);
+  const [traversalType, setTraversalType] = useState<
+    "preorder" | "inorder" | "postorder" | "levelorder"
+  >("preorder");
+  const [traversalResult, setTraversalResult] = useState<number[]>([]);
+  const [root, setRoot] = useState<TreeNodeInterface | null>(null);
+  const [highlightedNodes, setHighlightedNodes] = useState<TreeNodeInterface[]>(
+    []
+  );
   const [currentTraversalIndex, setCurrentTraversalIndex] = useState(0);
-
   // Build tree from comma-separated input
-  const buildTree = useCallback((input) => {
+  const buildTree = useCallback((input: string): TreeNodeInterface | null => {
     if (!input) return null;
 
     const values = input.split(",").map((val) => val.trim());
     if (values.length === 0) return null;
 
     const root = new TreeNode(Number(values[0]));
-    const queue = [root];
+    const queue: TreeNodeInterface[] = [root];
     let i = 1;
 
     while (queue.length > 0 && i < values.length) {
       const current = queue.shift();
+      if (!current) break;
 
       // Left child
       if (i < values.length && values[i] !== "null") {
@@ -324,7 +405,10 @@ const TreeTraversalVisualizer = () => {
   }, []);
 
   // Find node by value in the tree
-  const findNodeByValue = (node, value) => {
+  const findNodeByValue = (
+    node: TreeNodeInterface | null,
+    value: number
+  ): TreeNodeInterface | null => {
     if (!node) return null;
     if (node.value === value) return node;
     return (
@@ -338,7 +422,8 @@ const TreeTraversalVisualizer = () => {
     setRoot(treeRoot);
     setCurrentTraversalIndex(0);
 
-    let { result, path } = { result: [], path: [] };
+    let result: number[] = [];
+    let path: TreeNodeInterface[] = [];
     switch (traversalType) {
       case "preorder":
         ({ result, path } = TreeTraversal.preorder(treeRoot));
@@ -352,9 +437,6 @@ const TreeTraversalVisualizer = () => {
       case "levelorder":
         ({ result, path } = TreeTraversal.levelOrder(treeRoot));
         break;
-      default:
-        result = [];
-        path = [];
     }
 
     setTraversalResult(result);
@@ -372,9 +454,11 @@ const TreeTraversalVisualizer = () => {
         .slice(0, nextIndex + 1)
         .map((val) => {
           // Find ALL nodes with the current value (in case of duplicates)
-          const findAllNodesWithValue = (node) => {
+          const findAllNodesWithValue = (
+            node: TreeNodeInterface | null
+          ): TreeNodeInterface[] => {
             if (!node) return [];
-            const matches = [];
+            const matches: TreeNodeInterface[] = [];
 
             if (node.value === val) {
               matches.push(node);
@@ -390,17 +474,20 @@ const TreeTraversalVisualizer = () => {
           return findAllNodesWithValue(root);
         })
         .flat() // Flatten the array of node arrays
-        .filter((node) => node !== null);
+        .filter((node): node is TreeNodeInterface => node !== null);
 
       setHighlightedNodes(nodesUpToCurrentIndex);
     }
   };
+
   // Handle node movement (optional additional logic can be added here)
-  const handleNodeMove = (node, newPosition) => {
+  const handleNodeMove = (
+    node: TreeNodeInterface, 
+    newPosition: { x: number; y: number }
+  ) => {
     // You can add additional logic here if needed
     console.log(`Node ${node.value} moved to`, newPosition);
   };
-
   return (
     <div>
       <div className="info">
@@ -432,7 +519,6 @@ const TreeTraversalVisualizer = () => {
           <img
             src="/src/assets/level.jpg"
             alt=""
-            srcset=""
             style={{ width: "600px", height: "500px" }}
           />
           <p>Output: 1 2 3 4 5 6</p>
@@ -452,7 +538,6 @@ const TreeTraversalVisualizer = () => {
           <img
             src="/src/assets/preorder.jpg"
             alt=""
-            srcset=""
             style={{ width: "600px", height: "500px" }}
           />
 
@@ -473,7 +558,6 @@ const TreeTraversalVisualizer = () => {
           <img
             src="/src/assets/inorder.jpg"
             alt=""
-            srcset=""
             style={{ width: "600px", height: "500px" }}
           />
 
@@ -494,8 +578,6 @@ const TreeTraversalVisualizer = () => {
           </p>
           <img
             src="/src/assets/postorder.jpg"
-            alt=""
-            srcset=""
             style={{ width: "600px", height: "500px" }}
           />
           <pre>Output: 4 5 2 6 3 1</pre>
@@ -557,18 +639,23 @@ const TreeTraversalVisualizer = () => {
           </div>
 
           <div className="traversal-type-section">
-            <label className="traversal-type-label">Traversal Type</label>
-            <select
-              value={traversalType}
-              onChange={(e) => setTraversalType(e.target.value)}
-              className="traversal-type-select"
-            >
-              <option value="preorder">Preorder (Root, Left, Right)</option>
-              <option value="inorder">Inorder (Left, Root, Right)</option>
-              <option value="postorder">Postorder (Left, Right, Root)</option>
-              <option value="levelorder">Level Order (Breadth-First)</option>
-            </select>
-          </div>
+        <label className="traversal-type-label">Traversal Type</label>
+        <select
+          value={traversalType}
+          onChange={(e) => {
+            // Type assertion to match the expected type
+            setTraversalType(
+              e.target.value as "preorder" | "inorder" | "postorder" | "levelorder"
+            );
+          }}
+          className="traversal-type-select"
+        >
+          <option value="preorder">Preorder (Root, Left, Right)</option>
+          <option value="inorder">Inorder (Left, Root, Right)</option>
+          <option value="postorder">Postorder (Left, Right, Root)</option>
+          <option value="levelorder">Level Order (Breadth-First)</option>
+        </select>
+      </div>
 
           <div className="button-group">
             <button
