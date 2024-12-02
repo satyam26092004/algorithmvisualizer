@@ -6,16 +6,16 @@ import './App.css';
 
 // Lazy loaded algorithm components
 const SelectionSortSimulation = React.lazy(() => import('../components/selectionSort/selectionSort'));
-const BubbleSortSimulation = React.lazy(() => import("../components/BubbleSort/BubbleSort"));
+const BubbleSortSimulation = React.lazy(() => import("../components/bubbleSort/bubbleSort"));
 const DijkstraVisualizer = React.lazy(() => import("../components/dijkstra/dijshtras"));
-const RecursionTreeVisualizer = React.lazy(() => import("../components/MergeSort/MergeSort"));
-const QuickSortVisualizer = React.lazy(() => import("../components/QuickSort/QuickSort"));
-const KruskalVisualization = React.lazy(() => import("../components/Kruskal/Kruskal"));
-const BFSVisualization = React.lazy(() => import("../components/BFS/BFS"));
-const DFSVisualization = React.lazy(() => import("../components/DFS/DFS"));
-const GraphVisualizer = React.lazy(() => import("../components/Prims/Prims"));
-const TreeTraversalVisualizer = React.lazy(() => import("../components/TreeTraversal/Traversal"));
-const AnimatedVisualizer = React.lazy(() => import("../components/Backtracking/Backtracking"));
+const RecursionTreeVisualizer = React.lazy(() => import("../components/mergeSort/mergeSort"));
+const QuickSortVisualizer = React.lazy(() => import("../components/quickSort/quickSort"));
+const KruskalVisualization = React.lazy(() => import("../components/kruskal/kruskal"));
+const BFSVisualization = React.lazy(() => import("../components/bfs/bfs"));
+const DFSVisualization = React.lazy(() => import("../components/dfs/dfs"));
+const GraphVisualizer = React.lazy(() => import("../components/prims/prims"));
+const TreeTraversalVisualizer = React.lazy(() => import("../components/treetraversal/traversal"));
+const AnimatedVisualizer = React.lazy(() => import("../components/backtracking/backtracking"));
 
 // Error Fallback Component
 const ErrorFallback = ({ error, resetErrorBoundary }: { 
