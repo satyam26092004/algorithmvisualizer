@@ -43,9 +43,30 @@ const AnimatedVisualizer: React.FC = () => {
   ]);
 
   const [edges] = useState<number[][]>([
-    [0, 1], [0, 2], [0, 3], [1, 2], [1, 4], [2, 3], [2, 4], [3, 4],
-    [5, 3], [5, 0], [5, 6], [6, 1], [6, 7], [7, 8], [8, 9], [9, 2],
-    [10, 5], [10, 12], [11, 4], [11, 8], [12, 3], [12, 13], [13, 4], [13, 9],
+    [0, 1],
+    [0, 2],
+    [0, 3],
+    [1, 2],
+    [1, 4],
+    [2, 3],
+    [2, 4],
+    [3, 4],
+    [5, 3],
+    [5, 0],
+    [5, 6],
+    [6, 1],
+    [6, 7],
+    [7, 8],
+    [8, 9],
+    [9, 2],
+    [10, 5],
+    [10, 12],
+    [11, 4],
+    [11, 8],
+    [12, 3],
+    [12, 13],
+    [13, 4],
+    [13, 9],
   ]);
 
   const [coloringSteps, setColoringSteps] = useState<ColorStep[]>([]);
@@ -53,10 +74,26 @@ const AnimatedVisualizer: React.FC = () => {
   const [isColorAnimating, setIsColorAnimating] = useState<boolean>(false);
 
   const colors: string[] = [
-    "#FF4444", "#44FF44", "#4444FF", "#FFFF44", "#FF44FF", 
-    "#44FFFF", "#FFA500", "#800080", "#FFC0CB", "#A52A2A", 
-    "#FFD700", "#00FF00", "#0000FF", "#FF1493", "#8A2BE2", 
-    "#7FFF00", "#D2691E", "#FF4500", "#2E8B57", "#4682B4"
+    "#FF4444",
+    "#44FF44",
+    "#4444FF",
+    "#FFFF44",
+    "#FF44FF",
+    "#44FFFF",
+    "#FFA500",
+    "#800080",
+    "#FFC0CB",
+    "#A52A2A",
+    "#FFD700",
+    "#00FF00",
+    "#0000FF",
+    "#FF1493",
+    "#8A2BE2",
+    "#7FFF00",
+    "#D2691E",
+    "#FF4500",
+    "#2E8B57",
+    "#4682B4",
   ];
 
   // N-Queens Logic
@@ -143,8 +180,8 @@ const AnimatedVisualizer: React.FC = () => {
   };
 
   const isColorSafe = (
-    colorMap: Record<number, string>, 
-    nodeId: number, 
+    colorMap: Record<number, string>,
+    nodeId: number,
     color: string
   ): boolean => {
     return edges.every(([a, b]) => {
@@ -232,7 +269,7 @@ const AnimatedVisualizer: React.FC = () => {
       flexDirection: "column",
       gap: "2rem",
       padding: "1rem",
-      maxWidth: "800px",
+      maxWidth: "1000px",
       margin: "0 auto",
       fontFamily: "system-ui",
     },
@@ -282,7 +319,7 @@ const AnimatedVisualizer: React.FC = () => {
   return (
     <div>
       {/* N-Queens Section */}
-      <div className="info">
+      <div className="info" style={{fontSize:'23px',padding:'20px'}}>
         <h1>N Queen Problem</h1>
         <h2>What is the N-Queen Problem?</h2>
         <p>
@@ -408,7 +445,7 @@ const AnimatedVisualizer: React.FC = () => {
           lineHeight: 1.6,
           margin: "150px",
           fontSize: "25px",
-          width: "1000px",
+          width: "1200px",
         }}
       >
         <h1 style={{ color: "#2c3e50", fontSize: "50px" }}>
@@ -439,7 +476,7 @@ const AnimatedVisualizer: React.FC = () => {
           }}
         >
           {`{0, 1, 1, 1},
-{1, 0, 1, 0},
+     {1, 0, 1, 0},
 {1, 1, 0, 1},
 {1, 0, 1, 0}`}
         </pre>
@@ -535,21 +572,19 @@ const AnimatedVisualizer: React.FC = () => {
           </li>
         </ul>
       </div>
-      <div style={{width:'900px',paddingLeft:'100px'}}>
+      <div style={{ width: "900px", paddingLeft: "100px" }}>
         <h2>Graph Coloring Visualization</h2>
         <button
           style={styles.button}
           onClick={() => !isColorAnimating && solveGraphColoring()}
           disabled={isColorAnimating}
-        
         >
           {isColorAnimating ? "Coloring..." : "Start Graph Coloring"}
         </button>
         <button
-         style={styles.button}
+          style={styles.button}
           onClick={resetGraphColoring}
           disabled={!coloringSteps.length}
-          
         >
           Reset Graph Coloring
         </button>
@@ -561,7 +596,7 @@ const AnimatedVisualizer: React.FC = () => {
           Step Back
         </button>
         <button
-         style={styles.button}
+          style={styles.button}
           onClick={stepForwardColor}
           disabled={
             currentColorStep >= coloringSteps.length - 1 || isColorAnimating
@@ -574,7 +609,7 @@ const AnimatedVisualizer: React.FC = () => {
             {coloringSteps[currentColorStep].message}
           </div>
         )}
-        <svg width="400" height="300" style={{ border: "1px solid #ccc" }}>
+        <svg width="600" height="400" style={{ border: "1px solid #ccc" }}>
           {/* Edges */}
           {edges.map(([a, b], i) => (
             <line
