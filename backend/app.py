@@ -209,13 +209,22 @@ async def health_check():
         except Exception as e:
             masked_redis = f"set (error masking: {str(e)})"
             
+    from rq import Worker
+    active_workers = []
+    try:
+        workers = Worker.all(connection=valkey_conn)
+        active_workers = [{"name": w.name, "state": w.get_state()} for w in workers]
+    except Exception as e:
+        active_workers = f"Error: {str(e)}"
+
     return {
         "status": "healthy",
         "redis_url_configured": masked_redis,
         "redis_host_env": os.getenv("REDIS_HOST"),
         "redis_port_env": os.getenv("REDIS_PORT"),
         "qdrant_url_set": bool(qdrant_url),
-        "qdrant_collection": os.getenv("QDRANT_COLLECTION")
+        "qdrant_collection": os.getenv("QDRANT_COLLECTION"),
+        "active_workers": active_workers
     }
 
 if __name__ == "__main__":
