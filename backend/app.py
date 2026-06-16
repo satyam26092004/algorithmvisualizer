@@ -217,7 +217,7 @@ async def health_check():
     try:
         redis_ping = valkey_conn.ping()
         workers = Worker.all(connection=valkey_conn)
-        active_workers = [{"name": w.name, "state": w.get_state()} for w in workers]
+        active_workers = [{"name": w.name, "state": w.get_state(), "queues": w.queue_names} for w in workers]
         queue_count = q.count
         queue_jobs = q.job_ids
     except Exception as e:
