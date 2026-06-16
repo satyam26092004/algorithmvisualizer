@@ -227,6 +227,21 @@ async def health_check():
         "active_workers": active_workers
     }
 
+import threading
+from rq import SimpleWorker
+
+def run_worker():
+    print("🚀 Starting Valkey RQ Background Worker Thread...")
+    try:
+        worker = SimpleWorker([q], connection=valkey_conn)
+        worker.work()
+    except Exception as e:
+        print(f"❌ Worker thread error: {str(e)}")
+
+@app.on_event("startup")
+def startup_event():
+    threading.Thread(target=run_worker, daemon=True).start()
+
 if __name__ == "__main__":
     import uvicorn
     # Bind to 0.0.0.0 for Docker container mapping support
