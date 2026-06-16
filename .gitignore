@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Credentials and secrets
+.env
+.env.local
+.env.*.local
+backend/.env
+backend/qdrant_db/
+

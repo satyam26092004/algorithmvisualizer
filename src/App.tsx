@@ -3,6 +3,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { gsap } from "gsap";
 import { X } from "lucide-react";
 import './App.css';
+import { RAGChatbot } from './components/rag/RAGChatbot';
 
 // Lazy loaded algorithm components
 const SelectionSortSimulation = React.lazy(() => import('../components/selectionSort/selectionSort'));
@@ -233,8 +234,10 @@ const App: React.FC = () => {
     }
   }, [isLoading]);
 
-  // Find selected component
-  const SelectedComponent = algorithms.find((alg) => alg.id === selectedAlgorithm)?.component;
+  // Find selected component and details
+  const selectedAlgObj = algorithms.find((alg) => alg.id === selectedAlgorithm);
+  const SelectedComponent = selectedAlgObj?.component;
+  const selectedAlgorithmLabel = selectedAlgObj?.label || selectedAlgorithm;
 
   // Global error reset handler
   const handleErrorReset = () => {
@@ -284,6 +287,12 @@ const App: React.FC = () => {
               <div ref={mainContentRef} className="content">
                 {SelectedComponent ? <SelectedComponent /> : <p>Select an algorithm to visualize.</p>}
               </div>
+
+              {/* RAG DSA AI Assistant */}
+              <RAGChatbot 
+                selectedAlgorithm={selectedAlgorithm} 
+                algorithmLabel={selectedAlgorithmLabel} 
+              />
             </div>
           </Suspense>
         </ErrorBoundary>
