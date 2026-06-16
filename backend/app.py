@@ -70,7 +70,7 @@ except Exception as e:
     print("✅ Connected successfully to local Qdrant!")
 
 # Define job task for background execution by RQ Worker
-def process_rag_job(question: str, selected_algorithm: str, algorithm_label: str):
+def process_rag_job(question: str, selected_algorithm: str, algorithm_label: str, model: str = "gpt-4o-mini"):
     """
     Background job function executed by the RQ worker.
     Generates embedding, searches Qdrant, calls the LLM, and formats response citations.
@@ -116,7 +116,7 @@ Answer:"""
 
     # 4. Call LLM
     llm = ChatOpenAI(
-        model='gpt-4o-mini',
+        model=model,
         openai_api_key=os.getenv("OPENAI_API_KEY")
     )
     answer = llm.invoke(prompt)
@@ -149,6 +149,7 @@ class QueryRequest(BaseModel):
     question: str
     selected_algorithm: str
     algorithm_label: str
+    model: str = "gpt-4o-mini"
 
 class QueryResponse(BaseModel):
     job_id: str
@@ -168,6 +169,7 @@ async def chat_endpoint(request: QueryRequest):
             question, 
             request.selected_algorithm, 
             request.algorithm_label,
+            request.model,
             job_timeout="3m"
         )
         return QueryResponse(job_id=job.id, status=job.get_status())
