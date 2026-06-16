@@ -238,8 +238,11 @@ async def health_check():
 
 import threading
 from rq import SimpleWorker
+from rq.timeouts import TimerDeathPenalty
 
 class ThreadedSimpleWorker(SimpleWorker):
+    death_penalty_class = TimerDeathPenalty
+
     def setup_signals(self):
         # Disable signals since this runs in a background thread
         pass
