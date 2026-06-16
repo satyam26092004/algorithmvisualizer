@@ -4,5 +4,5 @@ pydantic==2.12.5
 python-dotenv==1.2.2
 langchain-openai==1.1.11
 langchain-qdrant==1.1.0
-valkey
+redis==7.3.0
 rq==2.7.0

@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
-from valkey import Valkey
+from redis import Redis as Valkey
 from rq import Queue
 
 # Suppress Hugging Face/Transformers warnings
