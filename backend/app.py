@@ -239,11 +239,16 @@ async def health_check():
 import threading
 from rq import SimpleWorker
 
+class ThreadedSimpleWorker(SimpleWorker):
+    def setup_signals(self):
+        # Disable signals since this runs in a background thread
+        pass
+
 def run_worker():
     print("🚀 Starting Valkey RQ Background Worker Thread...")
     try:
-        worker = SimpleWorker([q], connection=valkey_conn)
-        worker.work(setup_signals=False)
+        worker = ThreadedSimpleWorker([q], connection=valkey_conn)
+        worker.work()
     except Exception as e:
         print(f"❌ Worker thread error: {str(e)}")
 
