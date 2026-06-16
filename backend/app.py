@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_qdrant import QdrantVectorStore
-from redis import Redis
+from valkey import Valkey
 from rq import Queue
 
 # Suppress Hugging Face/Transformers warnings
@@ -28,17 +28,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Connect to Redis (supports standard connection URL or host/port config)
+# Connect to Valkey (supports standard connection URL or host/port config)
 redis_url = os.getenv("REDIS_URL")
 if redis_url:
-    redis_conn = Redis.from_url(redis_url)
-    print("🔌 Connected to Redis via connection URL string.")
+    valkey_conn = Valkey.from_url(redis_url)
+    print("🔌 Connected to Valkey via connection URL string.")
 else:
     redis_host = os.getenv("REDIS_HOST", "127.0.0.1")
     redis_port = int(os.getenv("REDIS_PORT", 6379))
-    redis_conn = Redis(host=redis_host, port=redis_port)
-    print(f"🔌 Connected to Redis at {redis_host}:{redis_port}.")
-q = Queue(connection=redis_conn)
+    valkey_conn = Valkey(host=redis_host, port=redis_port)
+    print(f"🔌 Connected to Valkey at {redis_host}:{redis_port}.")
+q = Queue(connection=valkey_conn)
 
 # Connect to Qdrant (Cloud first, falling back to local)
 embeddings = OpenAIEmbeddings(

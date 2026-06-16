@@ -29,7 +29,7 @@ services:
       context: "./backend"
       dockerfile: Dockerfile
     container_name: dsa-worker
-    command: rq worker --url redis://valkey:6379
+    command: rq worker --url valkey://valkey:6379
     environment:
       - REDIS_HOST=valkey
       - REDIS_PORT=6379
