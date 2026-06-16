@@ -17,5 +17,8 @@ COPY . .
 # Expose FastAPI port
 EXPOSE 8000
 
-# Default command to run backend
-CMD ["python", "app.py"]
+# Make start.sh executable
+RUN chmod +x start.sh
+
+# Run both worker and app
+CMD ["/bin/bash", "start.sh"]
