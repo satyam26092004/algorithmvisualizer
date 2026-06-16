@@ -5,8 +5,6 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from langchain_openai import OpenAIEmbeddings, ChatOpenAI
-from langchain_qdrant import QdrantVectorStore
 from redis import Redis as Valkey
 from rq import Queue
 
@@ -40,34 +38,45 @@ else:
     print(f"🔌 Connected to Valkey at {redis_host}:{redis_port}.")
 q = Queue(connection=valkey_conn)
 
-# Connect to Qdrant (Cloud first, falling back to local)
-embeddings = OpenAIEmbeddings(
-    model='text-embedding-3-small',
-    openai_api_key=os.getenv("OPENAI_API_KEY")
-)
+# Lazy-loaded Vector Store to minimize RAM footprint of FastAPI main thread
+vector_store = None
 
-try:
-    print("✨ Attempting to connect to Qdrant Cloud...")
-    vector_store = QdrantVectorStore.from_existing_collection(
-        collection_name=os.getenv("QDRANT_COLLECTION"),
-        embedding=embeddings,
-        url=os.getenv("QDRANT_URL"),
-        api_key=os.getenv("QDRANT_API_KEY"),
-        timeout=120
+def get_vector_store():
+    global vector_store
+    if vector_store is not None:
+        return vector_store
+
+    from langchain_openai import OpenAIEmbeddings
+    from langchain_qdrant import QdrantVectorStore
+
+    embeddings = OpenAIEmbeddings(
+        model='text-embedding-3-small',
+        openai_api_key=os.getenv("OPENAI_API_KEY")
     )
-    print("✅ Connected successfully to Qdrant Cloud!")
-except Exception as e:
-    print(f"\n⚠️ Qdrant Cloud connection failed: {e}")
-    print("Falling back to local Qdrant Vector database...")
-    local_db_path = "./qdrant_db"
-    if not os.path.exists(local_db_path):
-        raise RuntimeError("Local database directory './qdrant_db' not found. Please run main.py first to build the index!")
-    vector_store = QdrantVectorStore.from_existing_collection(
-        collection_name="local_pdf_collection",
-        embedding=embeddings,
-        path=local_db_path
-    )
-    print("✅ Connected successfully to local Qdrant!")
+
+    try:
+        print("✨ Attempting to connect to Qdrant Cloud...")
+        vector_store = QdrantVectorStore.from_existing_collection(
+            collection_name=os.getenv("QDRANT_COLLECTION"),
+            embedding=embeddings,
+            url=os.getenv("QDRANT_URL"),
+            api_key=os.getenv("QDRANT_API_KEY"),
+            timeout=120
+        )
+        print("✅ Connected successfully to Qdrant Cloud!")
+    except Exception as e:
+        print(f"\n⚠️ Qdrant Cloud connection failed: {e}")
+        print("Falling back to local Qdrant Vector database...")
+        local_db_path = "./qdrant_db"
+        if not os.path.exists(local_db_path):
+            raise RuntimeError("Local database directory './qdrant_db' not found. Please run main.py first to build the index!")
+        vector_store = QdrantVectorStore.from_existing_collection(
+            collection_name="local_pdf_collection",
+            embedding=embeddings,
+            path=local_db_path
+        )
+        print("✅ Connected successfully to local Qdrant!")
+    return vector_store
 
 # Define job task for background execution by RQ Worker
 def process_rag_job(question: str, selected_algorithm: str, algorithm_label: str, model: str = "gpt-4o-mini"):
@@ -75,8 +84,11 @@ def process_rag_job(question: str, selected_algorithm: str, algorithm_label: str
     Background job function executed by the RQ worker.
     Generates embedding, searches Qdrant, calls the LLM, and formats response citations.
     """
+    # Resolve vector store lazily to ensure worker has connection context
+    v_store = get_vector_store()
+    
     # 1. Similarity Search in Qdrant Vector Store
-    relevant_chunks = vector_store.similarity_search(question, k=4)
+    relevant_chunks = v_store.similarity_search(question, k=4)
     context = "\n\n".join([chunk.page_content for chunk in relevant_chunks])
     
     # 2. Extract citations
@@ -115,6 +127,7 @@ Question: {question}
 Answer:"""
 
     # 4. Call LLM
+    from langchain_openai import ChatOpenAI
     llm = ChatOpenAI(
         model=model,
         openai_api_key=os.getenv("OPENAI_API_KEY")
@@ -254,5 +267,6 @@ def startup_event():
 
 if __name__ == "__main__":
     import uvicorn
-    # Bind to 0.0.0.0 for Docker container mapping support
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, reload=True)
+    # Bind to 0.0.0.0 and resolve PORT dynamically from environment for Render deployment
+    port = int(os.getenv("PORT", 8000))
+    uvicorn.run("app:app", host="0.0.0.0", port=port)
