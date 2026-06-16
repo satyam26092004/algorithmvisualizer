@@ -243,7 +243,7 @@ def run_worker():
     print("🚀 Starting Valkey RQ Background Worker Thread...")
     try:
         worker = SimpleWorker([q], connection=valkey_conn)
-        worker.work()
+        worker.work(setup_signals=False)
     except Exception as e:
         print(f"❌ Worker thread error: {str(e)}")
 
