@@ -28,9 +28,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Connect to Valkey (supports standard connection URL or host/port config)
 redis_url = os.getenv("REDIS_URL")
 if redis_url:
+    redis_url = redis_url.strip()
     valkey_conn = Valkey.from_url(redis_url)
     print("🔌 Connected to Valkey via connection URL string.")
 else:
