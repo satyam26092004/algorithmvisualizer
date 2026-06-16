@@ -1,120 +1,86 @@
-/* kruskal.style.css - Dark Mode & Glassmorphic Kruskal Visualizer styling */
-
+/* KruskalVisualizer.css */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bodoni+Moda+SC:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Bona+Nova+SC:ital,wght@0,400;0,700;1,400&family=Crete+Round:ital@0;1&family=Dancing+Script:wght@400..700&family=Lora:ital,wght@0,400..700;1,400..700&family=Moon+Dance&family=Oleo+Script:wght@400;700&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+*{
+  box-sizing: border-box;
+  font-family: "Crete Round", serif;
+  font-weight: 400;
+  font-style: italic;
+  
+}
 .kruskal-visualizer {
-  padding: 24px;
-  max-width: 1200px;
-  margin: 40px auto;
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  color: #cbd5e1;
-}
-
-h1 {
-  font-size: 24px;
-  font-weight: 800;
-  margin-bottom: 16px;
-  color: #ffffff;
-}
-
-.alert {
-  background-color: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 16px;
-  font-size: 0.95rem;
-}
-
-.input-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.input-field {
-  padding: 10px 14px;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  color: white;
-  font-size: 0.95rem;
-  outline: none;
-  flex: 1;
-  transition: all 0.2s ease;
-}
-
-.input-field:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 8px rgba(99, 102, 241, 0.25);
-}
-
-.button-container {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.button {
-  background-color: #6366f1;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-}
-
-.button:hover {
-  background-color: #4f46e5;
-  transform: translateY(-1px);
-}
-
-.animation-speed {
-  margin-bottom: 20px;
-  font-size: 0.95rem;
-}
-
-.animation-speed label {
-  display: block;
-  margin-bottom: 8px;
-  color: #94a3b8;
-  font-weight: 500;
-}
-
-.range-input {
-  width: 100%;
-  accent-color: #6366f1;
-  cursor: pointer;
-}
-
-.graph-svg {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
-  background-color: rgba(0, 0, 0, 0.25);
-  display: block;
-  margin: 0 auto;
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-.mst-info {
-  margin-top: 20px;
-  padding: 16px;
-  background-color: rgba(99, 102, 241, 0.08);
-  border: 1px solid rgba(99, 102, 241, 0.2);
-  border-radius: 8px;
-  color: #cbd5e1;
-}
-
-.mst-info h3 {
-  font-weight: 700;
-  color: #a5b4fc;
-  margin-bottom: 8px;
-}
+    padding: 24px;
+    max-width: 1200px;
+    margin: auto;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 50px;
+    margin-left: 100px;
+  }
+  
+  h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+  
+  .alert {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 8px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+  
+  .input-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .input-field {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    flex: 1;
+  }
+  
+  .button-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .button {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .button:hover {
+    background-color: #0056b3;
+  }
+  
+  .animation-speed {
+    margin-bottom: 16px;
+  }
+  
+  .range-input {
+    width: 100%;
+  }
+  
+  .graph-svg {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .mst-info {
+    margin-top: 16px;
+    padding: 16px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+  }

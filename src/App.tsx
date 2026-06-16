@@ -246,7 +246,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="app-root-wrapper">
+    <div className="content">
       {isLoading ? (
         <LoadingPage onLoadComplete={() => setIsLoading(false)} />
       ) : (
@@ -254,50 +254,39 @@ const App: React.FC = () => {
           FallbackComponent={ErrorFallback}
           onReset={handleErrorReset}
         >
-          <Suspense fallback={<div className="loading-fallback">Loading Algorithm...</div>}>
+          <Suspense fallback={<div>Loading Algorithm...</div>}>
             <div className="app-container">
-              <header className="header-bar">
-                <button 
-                  className={`toggle-button ${isSidebarOpen ? 'open' : ''}`}
-                  onClick={toggleSidebar}
-                  title="Toggle Sidebar"
-                >
-                  {isSidebarOpen ? (
-                    <X className="icon" />
-                  ) : (
-                    "☰"
-                  )}
-                </button>
-                <h1 className="header-title">
-                  ALGORITHM <span className="highlight-text">VISUALIZER</span>
-                </h1>
-                <div className="active-algo-badge">
-                  {selectedAlgorithmLabel}
-                </div>
-              </header>
+              <button 
+                className={`toggle-button ${isSidebarOpen ? 'open' : ''}`}
+                onClick={toggleSidebar}
+              >
+                {isSidebarOpen ? (
+                  <X className="icon" />
+                ) : (
+                  "☰"
+                )}
+              </button>
 
               <div ref={sidebarRef} className="sidebar">
                 <h2 className="sidebar-title">Algorithms</h2>
-                <div className="menu-items-list">
-                  {algorithms.map(({ id, label }, index) => (
-                    <div
-                      key={id}
-                      ref={el => menuItemsRef.current[index] = el}
-                      className={`menu-item ${selectedAlgorithm === id ? 'active' : ''}`}
-                      onClick={() => {
-                        handleSelectAlgorithm(id);
-                        setIsSidebarOpen(false);
-                      }}
-                    >
-                      {label}
-                    </div>
-                  ))}
-                </div>
+                {algorithms.map(({ id, label }, index) => (
+                  <div
+                    key={id}
+                    ref={el => menuItemsRef.current[index] = el}
+                    className={`menu-item ${selectedAlgorithm === id ? 'active' : ''}`}
+                    onClick={() => {
+                      handleSelectAlgorithm(id);
+                      setIsSidebarOpen(false);
+                    }}
+                  >
+                    {label}
+                  </div>
+                ))}
               </div>
-
-              <main ref={mainContentRef} className="main-content">
-                {SelectedComponent ? <SelectedComponent /> : <p className="no-selection">Select an algorithm from the menu to start visualizing.</p>}
-              </main>
+              <p className="title">ALGORITHM VISUALIZER</p>
+              <div ref={mainContentRef} className="content">
+                {SelectedComponent ? <SelectedComponent /> : <p>Select an algorithm to visualize.</p>}
+              </div>
 
               {/* RAG DSA AI Assistant */}
               <RAGChatbot 

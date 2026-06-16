@@ -1,61 +1,50 @@
-/* selectionSort.module.css - Optimized Dark Mode & Glassmorphism Styles */
-
+/* selectionSort.styles.css */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bodoni+Moda+SC:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Bona+Nova+SC:ital,wght@0,400;0,700;1,400&family=Crete+Round:ital@0;1&family=Dancing+Script:wght@400..700&family=Lora:ital,wght@0,400..700;1,400..700&family=Moon+Dance&family=Oleo+Script:wght@400;700&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+*{
+  box-sizing: border-box;
+  font-family: "Crete Round", serif;
+  font-weight: 400;
+  font-style: italic;
+  
+}
 :root {
-  --primary-color: #6366f1;
-  --secondary-color: #10b981;
-  --background-color: transparent;
-  --text-color: #e2e8f0;
-  --muted-text-color: #94a3b8;
-  --dark-color: #0f172a;
+  --primary-color: #3498db;
+  --secondary-color: #2ecc71;
+  --background-color: #ffffff;
+  --text-color: #34495e;
+  --muted-text-color: #7f8c8d;
+  --dark-color: #2c3e50;
+  --light-gray: #ecf0f1;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: 2rem;
   background-color: var(--background-color);
+  min-height: 100vh;
+  font-family: "Edu AU VIC WA NT Pre", cursive;
   text-align: left;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: 25px;
+  font-style: italic;
 }
 
 .header {
   text-align: center;
   margin-bottom: 2rem;
-  display: flex;
-  flex-direction: column-reverse;
-  gap: 12px;
 }
 
 .header h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #ffffff;
-  margin-bottom: 0.25rem;
+  font-size: 2.5rem;
+  color: var(--dark-color);
+  margin-bottom: 0.5rem;
 }
 
 .header p {
   color: var(--muted-text-color);
   font-size: 1rem;
-  font-weight: 500;
-}
-
-.header div {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 20px;
-  color: #cbd5e1;
-  font-size: 0.95rem;
-  line-height: 1.6;
-  text-align: left;
-}
-
-.header div ol {
-  margin-top: 12px;
-  padding-left: 20px;
-}
-
-.header div li {
-  margin-bottom: 6px;
 }
 
 .tabNavigation {
@@ -67,38 +56,26 @@
 
 .tabButton {
   padding: 0.75rem 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background-color: rgba(255, 255, 255, 0.03);
-  color: #cbd5e1;
+  border: none;
+  background-color: var(--light-gray);
+  color: var(--text-color);
   cursor: pointer;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: all 0.25s ease;
-}
-
-.tabButton:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: white;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .tabButton.activeTab {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  border-color: transparent;
+  background-color: var(--primary-color);
   color: white;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
 }
 
 .visualizationSection,
 .codeSection {
-  background: rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 2rem;
-  color: #cbd5e1;
 }
 
 .arrayControls {
@@ -110,41 +87,27 @@
 
 .controlButton {
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background-color: var(--secondary-color);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-}
-
-.controlButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(16, 185, 129, 0.3);
+  transition: background-color 0.3s ease;
 }
 
 .controlButton:disabled {
-  background: rgba(255, 255, 255, 0.05);
-  color: #64748b;
+  background-color: var(--muted-text-color);
   cursor: not-allowed;
-  box-shadow: none;
-  transform: none;
 }
 
 .barContainer {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  height: 320px;
-  gap: 0.75rem;
+  height: 300px;
+  gap: 0.5rem;
   margin-top: 2rem;
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  padding: 24px;
 }
 
 .barWrapper {
@@ -152,17 +115,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  flex-grow: 0;
 }
 
 .bar {
   width: 40px;
-  border-radius: 6px;
+  border-radius: 4px;
   transition: all 0.3s ease;
   position: relative;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
 }
 
 .barValue {
@@ -172,8 +131,7 @@
   transform: translateX(-50%);
   margin-top: 0.5rem;
   color: var(--muted-text-color);
-  font-size: 0.85rem;
-  font-weight: 600;
+  font-size: 0.8rem;
 }
 
 .languageSelector {
@@ -184,27 +142,18 @@
 }
 
 .languageButton {
-  padding: 0.5rem 1.25rem;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  font-size: 0.9rem;
-  color: #cbd5e1;
-  font-weight: 600;
+  padding: 0.5rem 1rem;
+  background-color: var(--light-gray);
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.languageButton:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: white;
+  transition: background-color 0.3s ease;
 }
 
 .languageButton.activeLanguage {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-  border-color: transparent;
+  background-color: var(--primary-color);
   color: white;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
 }
 
 .codeSnippetContainer {
@@ -217,43 +166,43 @@
   right: 1rem;
   z-index: 10;
   padding: 0.5rem 1rem;
-  background-color: #6366f1;
+  background-color: var(--dark-color);
   color: white;
   border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.3s ease;
 }
 
 .copyButton:hover {
-  background-color: #4f46e5;
-  transform: scale(1.03);
+  background-color: var(--text-color);
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 0.5rem;
+    padding: 1rem;
   }
 
   .header h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
 
   .tabNavigation,
   .languageSelector {
-    flex-direction: row;
-    gap: 8px;
+    flex-direction: column;
+    align-items: center;
   }
 
   .barContainer {
-    height: 240px;
-    gap: 4px;
-    padding: 12px;
+    height: 200px;
   }
 
   .bar {
-    width: 24px;
+    width: 25px;
+  }
+
+  .copyButton {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.8rem;
   }
 }
