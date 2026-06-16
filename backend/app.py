@@ -248,12 +248,14 @@ class ThreadedSimpleWorker(SimpleWorker):
         pass
 
 def run_worker():
+    import traceback
     print("🚀 Starting Valkey RQ Background Worker Thread...")
     try:
         worker = ThreadedSimpleWorker([q], connection=valkey_conn)
         worker.work()
     except Exception as e:
         print(f"❌ Worker thread error: {str(e)}")
+        traceback.print_exc()
 
 @app.on_event("startup")
 def startup_event():
