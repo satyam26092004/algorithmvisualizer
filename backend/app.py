@@ -236,30 +236,21 @@ async def health_check():
         "queue_jobs": queue_jobs
     }
 
-import threading
-from rq import SimpleWorker
-from rq.timeouts import TimerDeathPenalty
+import subprocess
+import sys
 
-class ThreadedSimpleWorker(SimpleWorker):
-    death_penalty_class = TimerDeathPenalty
-
-    def setup_signals(self):
-        # Disable signals since this runs in a background thread
-        pass
-
-def run_worker():
-    import traceback
-    print("🚀 Starting Valkey RQ Background Worker Thread...")
+def start_worker_process():
+    print("🚀 Starting Valkey RQ Background Worker Subprocess...")
     try:
-        worker = ThreadedSimpleWorker([q], connection=valkey_conn)
-        worker.work()
+        # Popen spawns the worker in its own process, so it has its own main thread
+        subprocess.Popen([sys.executable, "worker.py"])
+        print("✅ Valkey RQ Background Worker Subprocess spawned successfully.")
     except Exception as e:
-        print(f"❌ Worker thread error: {str(e)}")
-        traceback.print_exc()
+        print(f"❌ Failed to spawn background worker subprocess: {str(e)}")
 
 @app.on_event("startup")
 def startup_event():
-    threading.Thread(target=run_worker, daemon=True).start()
+    start_worker_process()
 
 if __name__ == "__main__":
     import uvicorn
