@@ -1,8 +1,9 @@
+version: '3.8'
 
 services:
-  redis:
-    image: redis:7-alpine
-    container_name: dsa-redis
+  valkey:
+    image: valkey/valkey:8-alpine
+    container_name: dsa-valkey
     ports:
       - "6379:6379"
     restart: always
@@ -15,12 +16,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - REDIS_HOST=redis
+      - REDIS_HOST=valkey
       - REDIS_PORT=6379
     env_file:
       - "./backend/.env"
     depends_on:
-      - redis
+      - valkey
     restart: always
 
   worker:
@@ -28,14 +29,14 @@ services:
       context: "./backend"
       dockerfile: Dockerfile
     container_name: dsa-worker
-    command: rq worker --url redis://redis:6379
+    command: rq worker --url redis://valkey:6379
     environment:
-      - REDIS_HOST=redis
+      - REDIS_HOST=valkey
       - REDIS_PORT=6379
     env_file:
       - "./backend/.env"
     depends_on:
-      - redis
+      - valkey
       - backend
     restart: always
 
