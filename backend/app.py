@@ -195,7 +195,28 @@ async def chat_job_status(job_id: str):
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "healthy", "database": "connected"}
+    redis_url = os.getenv("REDIS_URL")
+    qdrant_url = os.getenv("QDRANT_URL")
+    
+    masked_redis = "not set"
+    if redis_url:
+        try:
+            parts = redis_url.split("@")
+            if len(parts) > 1:
+                masked_redis = f"rediss://***@{parts[-1]}"
+            else:
+                masked_redis = "set (no @ separator)"
+        except Exception as e:
+            masked_redis = f"set (error masking: {str(e)})"
+            
+    return {
+        "status": "healthy",
+        "redis_url_configured": masked_redis,
+        "redis_host_env": os.getenv("REDIS_HOST"),
+        "redis_port_env": os.getenv("REDIS_PORT"),
+        "qdrant_url_set": bool(qdrant_url),
+        "qdrant_collection": os.getenv("QDRANT_COLLECTION")
+    }
 
 if __name__ == "__main__":
     import uvicorn
